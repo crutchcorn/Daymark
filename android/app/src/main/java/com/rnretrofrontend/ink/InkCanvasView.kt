@@ -47,7 +47,7 @@ class InkCanvasView(context: Context) : FrameLayout(context), InProgressStrokesF
     // Brush configuration
     private var brushColor: Int = Color.Black.toArgb()
     private var brushSize: Float = 5f
-    private var brushFamily = StockBrushes.pressurePenLatest
+    private var brushFamily = StockBrushes.pressurePen()
 
     init {
         inProgressStrokesView.addFinishedStrokesListener(this)
@@ -95,9 +95,9 @@ class InkCanvasView(context: Context) : FrameLayout(context), InProgressStrokesF
      */
     fun setBrushFamily(family: String) {
         brushFamily = when (family.lowercase()) {
-            "marker" -> StockBrushes.markerLatest
-            "highlighter" -> StockBrushes.highlighterLatest
-            else -> StockBrushes.pressurePenLatest
+            "marker" -> StockBrushes.marker()
+            "highlighter" -> StockBrushes.highlighter()
+            else -> StockBrushes.pressurePen()
         }
     }
 

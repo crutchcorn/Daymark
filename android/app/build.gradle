@@ -132,7 +132,7 @@ dependencies {
     implementation("androidx.input:input-motionprediction:1.0.0-beta05")
 
     // Android Ink API dependencies
-    def ink_version = "1.0.0-alpha01"
+    def ink_version = "1.0.0-rc01"
     implementation("androidx.ink:ink-authoring:$ink_version")
     implementation("androidx.ink:ink-brush:$ink_version")
     implementation("androidx.ink:ink-geometry:$ink_version")
