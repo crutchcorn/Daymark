@@ -2,7 +2,8 @@ import { createStaticNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { ComponentProps } from 'react';
-import { HomeView } from '../views/home/home.view.tsx';
+import { HomeView } from '../views/home/home.view';
+import { CalendarView } from '../views/calendar/calendar.view';
 
 const RootStack = createBottomTabNavigator({
   screenOptions: ({ route }) => ({
@@ -13,6 +14,8 @@ const RootStack = createBottomTabNavigator({
         case 'Home':
           iconName = focused ? 'apps' : 'apps-outline';
           break;
+        case 'Calendar':
+          iconName = focused ? 'calendar' : 'calendar-outline';
         default:
           iconName = 'ellipse';
       }
@@ -26,6 +29,7 @@ const RootStack = createBottomTabNavigator({
   }),
   screens: {
     Home: HomeView,
+    Calendar: CalendarView,
   },
 });
 
