@@ -5,6 +5,7 @@ import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
+import com.rnretrofrontend.ink.InkPackage
 import com.rnretrofrontend.statusbar.StatusBarPackage
 import android.content.res.Configuration
 import expo.modules.ApplicationLifecycleDispatcher
@@ -20,6 +21,7 @@ class MainApplication : Application(), ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // add(MyReactNativePackage())
           add(StatusBarPackage())
+          add(InkPackage())
         },
     )
   }
