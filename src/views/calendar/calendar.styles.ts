@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 16, fontWeight: 'bold', marginRight: 6 },
   section: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     color: 'grey',
     textTransform: 'capitalize',
   },

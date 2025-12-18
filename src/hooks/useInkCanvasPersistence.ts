@@ -1,46 +1,17 @@
-import {useCallback, useRef} from 'react';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {db} from '../constants/db';
-import {
-  getInkCanvasState,
-  saveInkCanvasState,
-} from '../services/inkCanvas';
-import type {InkCanvasRef} from '../components/InkCanvas';
+import { useCallback, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { db } from '../constants/db';
+import { getInkCanvasState, saveInkCanvasState } from '../services/inkCanvas';
+import type { InkCanvasRef } from '../components/InkCanvas';
 
 const QUERY_KEY_PREFIX = 'inkCanvasState';
 
-/**
- * Hook for managing ink canvas state persistence.
- *
- * @param canvasId - Unique identifier for the canvas
- * @returns Object containing the canvas ref, initial strokes, loading state, and save handler
- *
- * @example
- * ```tsx
- * function DrawingScreen() {
- *   const {canvasRef, initialStrokes, isLoading, handleStrokesChange} =
- *     useInkCanvasPersistence('main-canvas');
- *
- *   if (isLoading) {
- *     return <ActivityIndicator />;
- *   }
- *
- *   return (
- *     <InkCanvas
- *       ref={canvasRef}
- *       initialStrokes={initialStrokes}
- *       onStrokesChange={handleStrokesChange}
- *     />
- *   );
- * }
- * ```
- */
 export function useInkCanvasPersistence(canvasId: string) {
   const canvasRef = useRef<InkCanvasRef>(null);
   const queryClient = useQueryClient();
 
   // Query to load initial strokes
-  const {data, isLoading, error} = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: [QUERY_KEY_PREFIX, canvasId],
     queryFn: async () => {
       const state = await getInkCanvasState(db, canvasId);

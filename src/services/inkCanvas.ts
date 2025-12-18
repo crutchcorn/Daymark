@@ -1,6 +1,6 @@
-import {eq} from 'drizzle-orm';
-import type {ExpoSQLiteDatabase} from 'drizzle-orm/expo-sqlite';
-import {inkCanvasStateTable} from '../db/schema';
+import { eq } from 'drizzle-orm';
+import { DB } from '../constants/db';
+import { inkCanvasStateTable } from '../db/schema';
 
 export interface InkCanvasState {
   id: number;
@@ -13,7 +13,7 @@ export interface InkCanvasState {
  * Retrieves the ink canvas state for a given canvas ID.
  */
 export async function getInkCanvasState(
-  db: ExpoSQLiteDatabase,
+  db: DB,
   canvasId: string,
 ): Promise<InkCanvasState | null> {
   const results = await db
@@ -34,7 +34,7 @@ export async function getInkCanvasState(
  * Creates a new record if it doesn't exist, or updates the existing one.
  */
 export async function saveInkCanvasState(
-  db: ExpoSQLiteDatabase,
+  db: DB,
   canvasId: string,
   strokesJson: string,
 ): Promise<void> {
@@ -61,7 +61,7 @@ export async function saveInkCanvasState(
  * Deletes the ink canvas state for a given canvas ID.
  */
 export async function deleteInkCanvasState(
-  db: ExpoSQLiteDatabase,
+  db: DB,
   canvasId: string,
 ): Promise<void> {
   await db

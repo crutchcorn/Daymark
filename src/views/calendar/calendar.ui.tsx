@@ -1,2 +1,1 @@
-export function CalendarUI() {
-}
+export function CalendarUI() {}

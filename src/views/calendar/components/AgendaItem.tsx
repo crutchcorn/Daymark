@@ -1,13 +1,20 @@
 import isEmpty from 'lodash/isEmpty';
-import React, {useCallback} from 'react';
-import {StyleSheet, Alert, View, Text, TouchableOpacity, Button} from 'react-native';
+import React, { useCallback } from 'react';
+import {
+  StyleSheet,
+  Alert,
+  View,
+  Text,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 
 interface ItemProps {
   item: any;
 }
 
 const AgendaItem = (props: ItemProps) => {
-  const {item} = props;
+  const { item } = props;
 
   const buttonPressed = useCallback(() => {
     Alert.alert('Show me more');
@@ -33,7 +40,7 @@ const AgendaItem = (props: ItemProps) => {
       </View>
       <Text style={styles.itemTitleText}>{item.title}</Text>
       <View style={styles.itemButtonContainer}>
-        <Button color={'grey'} title={'Info'} onPress={buttonPressed}/>
+        <Button color={'grey'} title={'Info'} onPress={buttonPressed} />
       </View>
     </TouchableOpacity>
   );
@@ -47,36 +54,36 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   itemHourText: {
-    color: 'black'
+    color: 'black',
   },
   itemDurationText: {
     color: 'grey',
     fontSize: 12,
     marginTop: 4,
-    marginLeft: 4
+    marginLeft: 4,
   },
   itemTitleText: {
     color: 'black',
     marginLeft: 16,
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 16,
   },
   itemButtonContainer: {
     flex: 1,
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   emptyItem: {
     paddingLeft: 20,
     height: 52,
     justifyContent: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgrey'
+    borderBottomColor: 'lightgrey',
   },
   emptyItemText: {
     color: 'lightgrey',
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });

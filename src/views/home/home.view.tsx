@@ -10,9 +10,11 @@ export function HomeView() {
     return <ActivityIndicator />;
   }
 
-  return <HomeUI
-    canvasRef={canvasRef}
-    initialStrokes={initialStrokes}
-    handleStrokesChange={handleStrokesChange}
-  />;
+  return (
+    <HomeUI
+      canvasRef={canvasRef}
+      initialStrokes={initialStrokes}
+      handleStrokesChange={handleStrokesChange}
+    />
+  );
 }

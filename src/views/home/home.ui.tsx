@@ -8,7 +8,11 @@ interface HomeUIProps {
   handleStrokesChange: (strokesJson: string) => void;
 }
 
-export function HomeUI({ canvasRef, initialStrokes, handleStrokesChange }: HomeUIProps) {
+export function HomeUI({
+  canvasRef,
+  initialStrokes,
+  handleStrokesChange,
+}: HomeUIProps) {
   const handleClear = () => {
     canvasRef.current?.clear();
   };

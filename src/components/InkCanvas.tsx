@@ -1,4 +1,9 @@
-import React, {forwardRef, useImperativeHandle, useRef, useEffect} from 'react';
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+} from 'react';
 import {
   requireNativeComponent,
   UIManager,
