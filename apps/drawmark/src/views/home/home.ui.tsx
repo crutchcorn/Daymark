@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { InkEditor, InkEditorRef } from '../../components/InkEditor';
 import { Button, View } from 'react-native';
 import { InkCanvas } from '../../components/InkCanvas';
