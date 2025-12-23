@@ -57,21 +57,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // Motion Event Predictor for low-latency stylus input
-    implementation(libs.androidx.input.motionprediction)
-
-    // Android Ink API dependencies
-    implementation(libs.androidx.ink.authoring)
-    implementation(libs.androidx.ink.brush)
-    implementation(libs.androidx.ink.geometry)
-    implementation(libs.androidx.ink.nativeloader)
-    implementation(libs.androidx.ink.rendering)
-    implementation(libs.androidx.ink.strokes)
-
-    // Gson for JSON serialization
-    implementation(libs.gson)
-
-    // Internal library from libs folder
+    // Internal library from libs folder (includes Ink API, Gson, etc.)
     implementation("app.drawmark.android:lib")
 
     testImplementation(libs.junit)

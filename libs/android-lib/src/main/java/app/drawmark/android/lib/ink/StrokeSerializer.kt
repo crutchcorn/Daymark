@@ -5,7 +5,7 @@
 //
 // Serialization and deserialization utilities for Ink strokes.
 
-package app.drawmark.android.prototype.ink
+package app.drawmark.android.lib.ink
 
 import androidx.ink.brush.Brush
 import androidx.ink.brush.BrushFamily

@@ -6,14 +6,13 @@
 // A Jetpack Compose-based drawing surface using the Android Ink API.
 // This view supports editing (drawing) strokes.
 
-package app.drawmark.android.prototype.ink
+package app.drawmark.android.lib.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Matrix
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.ink.authoring.InProgressStrokeId
 import androidx.ink.authoring.InProgressStrokesFinishedListener

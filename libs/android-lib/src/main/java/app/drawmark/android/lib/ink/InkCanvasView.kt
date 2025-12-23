@@ -6,20 +6,17 @@
 // A Jetpack Compose-based view for displaying ink strokes (read-only).
 // For editing capabilities, use InkEditorView instead.
 
-package app.drawmark.android.prototype.ink
+package app.drawmark.android.lib.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Matrix
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.ComposeView
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
