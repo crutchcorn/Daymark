@@ -12,7 +12,7 @@
     "@nx/gradle": "22.3.3",
     "@nx/jest": "22.3.3",
     "@nx/react-native": "22.3.3",
-    "eslint": "~8.57.0",
+    "eslint": "~9.39.2",
     "jest": "^30.0.2",
     "metro-config": "~0.82.4",
     "metro-resolver": "~0.82.4",
