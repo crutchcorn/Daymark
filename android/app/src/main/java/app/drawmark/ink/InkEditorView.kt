@@ -13,7 +13,6 @@ import android.content.Context
 import android.graphics.Matrix
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -44,12 +43,10 @@ import androidx.input.motionprediction.MotionEventPredictor
 @SuppressLint("ViewConstructor")
 class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesFinishedListener {
 
-    private val composeView: ComposeView
     private val inProgressStrokesView = InProgressStrokesView(context)
     private val finishedStrokesState = mutableStateOf(emptySet<Stroke>())
     private val canvasStrokeRenderer = CanvasStrokeRenderer.create()
     private val strokeSerializer = StrokeSerializer()
-    private var wasDetached = false
 
     // Callback for stroke changes
     var onStrokesChange: ((String) -> Unit)? = null
@@ -61,56 +58,19 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
 
     init {
         inProgressStrokesView.addFinishedStrokesListener(this)
-        composeView = ComposeView(context)
-        addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-    }
 
-    private fun setComposeContent() {
-        composeView.setContent {
-            InkEditorSurface(
-                inProgressStrokesView = inProgressStrokesView,
-                finishedStrokesState = finishedStrokesState.value,
-                canvasStrokeRenderer = canvasStrokeRenderer,
-                getBrush = { createBrush() }
-            )
-        }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        
-        if (wasDetached) {
-            // Re-add the listener since we removed it on detach
-            inProgressStrokesView.addFinishedStrokesListener(this)
-        }
-        
-        // Post to ensure ComposeView is fully attached before setting content
-        post {
-            if (composeView.isAttachedToWindow) {
-                if (wasDetached) {
-                    // Dispose old composition first for re-attachment
-                    composeView.disposeComposition()
-                }
-                setComposeContent()
-                
-                // Force a full layout pass to trigger initial render
-                val width = width
-                val height = height
-                composeView.measure(
-                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+        val composeView = ComposeView(context).apply {
+            setContent {
+                InkEditorSurface(
+                    inProgressStrokesView = inProgressStrokesView,
+                    finishedStrokesState = finishedStrokesState.value,
+                    canvasStrokeRenderer = canvasStrokeRenderer,
+                    getBrush = { createBrush() }
                 )
-                composeView.layout(0, 0, width, height)
-                composeView.invalidate()
             }
         }
-    }
 
-    override fun onDetachedFromWindow() {
-        wasDetached = true
-        // Clean up the listener to avoid memory leaks
-        inProgressStrokesView.removeFinishedStrokesListener(this)
-        super.onDetachedFromWindow()
+        addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
     private fun createBrush(): Brush {
@@ -204,15 +164,7 @@ private fun InkEditorSurface(
             factory = { context ->
                 val rootView = FrameLayout(context)
                 
-                // Remove from existing parent if any (needed for view reuse)
-                (inProgressStrokesView.parent as? ViewGroup)?.removeView(inProgressStrokesView)
-                
-                inProgressStrokesView.apply {
-                    layoutParams = FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT
-                    )
-                }
+                inProgressStrokesView.eagerInit()
 
                 val predictor = MotionEventPredictor.newInstance(rootView)
                 val touchListener = View.OnTouchListener { view, event ->
