@@ -29,55 +29,20 @@ import androidx.ink.strokes.Stroke
  */
 @SuppressLint("ViewConstructor")
 class InkCanvasView(context: Context) : FrameLayout(context) {
-
-    private val composeView: ComposeView
     private val finishedStrokesState = mutableStateOf(emptySet<Stroke>())
     private val canvasStrokeRenderer = CanvasStrokeRenderer.create()
     private val strokeSerializer = StrokeSerializer()
-    private var wasDetached = false
 
     init {
-        composeView = ComposeView(context)
-        addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-    }
-
-    private fun setComposeContent() {
-        composeView.setContent {
-            InkDisplaySurface(
-                finishedStrokesState = finishedStrokesState.value,
-                canvasStrokeRenderer = canvasStrokeRenderer
-            )
-        }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        
-        // Post to ensure ComposeView is fully attached before setting content
-        post {
-            if (composeView.isAttachedToWindow) {
-                if (wasDetached) {
-                    // Dispose old composition first for re-attachment
-                    composeView.disposeComposition()
-                }
-                setComposeContent()
-                
-                // Force a full layout pass to trigger initial render
-                val width = width
-                val height = height
-                composeView.measure(
-                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+        val composeView = ComposeView(context).apply {
+            setContent {
+                InkDisplaySurface(
+                    finishedStrokesState = finishedStrokesState.value,
+                    canvasStrokeRenderer = canvasStrokeRenderer
                 )
-                composeView.layout(0, 0, width, height)
-                composeView.invalidate()
             }
         }
-    }
-
-    override fun onDetachedFromWindow() {
-        wasDetached = true
-        super.onDetachedFromWindow()
+        addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
     /**
