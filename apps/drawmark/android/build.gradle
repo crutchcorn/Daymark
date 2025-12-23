@@ -1,6 +1,4 @@
-plugins {
-    id "dev.nx.gradle.project-graph" version "0.1.10"
-}
+
 buildscript {
     ext {
         buildToolsVersion = "36.0.0"
@@ -20,6 +18,10 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
         classpath("org.jetbrains.kotlin:compose-compiler-gradle-plugin:${kotlinVersion}")
     }
+}
+
+plugins {
+    id "dev.nx.gradle.project-graph" version "0.1.10"
 }
 
 apply plugin: "com.facebook.react.rootproject"
