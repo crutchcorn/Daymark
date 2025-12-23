@@ -20,8 +20,8 @@
         "upgradeTargetName": "update",
         "bundleTargetName": "bundle",
         "podInstallTargetName": "pod-install",
-        "runIosTargetName": "run-ios",
-        "runAndroidTargetName": "run-android",
+        "runIosTargetName": "ios",
+        "runAndroidTargetName": "android",
         "buildIosTargetName": "build-ios",
         "buildAndroidTargetName": "build-android",
         "syncDepsTargetName": "sync-deps"
@@ -29,6 +29,7 @@
     },
     {
       "plugin": "@nx/gradle",
+      "exclude": ["apps/drawmark/android/**/*"],
       "options": {
         "testTargetName": "test",
         "classesTargetName": "classes",

@@ -5,7 +5,11 @@
   "scripts": {
     "lint": "nx run-many --targets=eslint:lint",
     "test:js": "nx run-many --targets=jest:test",
-    "lint:sherif": "sherif"
+    "lint:sherif": "sherif",
+    "start": "nx run drawmark:start",
+    "android": "nx run drawmark:android",
+    "ios": "nx run drawmark:ios",
+    "build": "nx run-many --targets=build"
   },
   "packageManager": "pnpm@10.23.0",
   "devDependencies": {
