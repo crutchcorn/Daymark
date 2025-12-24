@@ -17,6 +17,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.ink.authoring.InProgressStrokeId
 import androidx.ink.authoring.InProgressStrokesFinishedListener
@@ -263,26 +265,29 @@ private fun InkEditorSurface(
 
 /**
  * Composable wrapper for InkEditor that can be used in Jetpack Compose.
+ * Includes an integrated brush selector toolbar.
  */
 @Composable
 fun InkEditor(
     context: Context,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showBrushSelector: Boolean = true
 ) {
     val inProgressStrokesView = remember { InProgressStrokesView(context) }
     val finishedStrokesState = remember { mutableStateOf(emptySet<Stroke>()) }
     val canvasStrokeRenderer = remember { CanvasStrokeRenderer.create() }
 
-    // Default brush configuration
-    val brushFamily = remember { StockBrushes.pressurePen() }
-    val brushColor = remember { Color.Black.toArgb() }
-    val brushSize = remember { 5f }
+    // Brush configuration state
+    val selectedBrushIndex = remember { mutableStateOf(0) }
+    val brushFamily = remember { mutableStateOf(StockBrushes.pressurePen()) }
+    val brushColor = remember { mutableStateOf(Color.Black.toArgb()) }
+    val brushSize = remember { mutableStateOf(5f) }
 
     val getBrush: () -> Brush = {
         Brush.createWithColorIntArgb(
-            family = brushFamily,
-            colorIntArgb = brushColor,
-            size = brushSize,
+            family = brushFamily.value,
+            colorIntArgb = brushColor.value,
+            size = brushSize.value,
             epsilon = 0.1f
         )
     }
@@ -305,10 +310,36 @@ fun InkEditor(
         }
     }
 
-    InkEditorSurface(
-        inProgressStrokesView = inProgressStrokesView,
-        finishedStrokesState = finishedStrokesState.value,
-        canvasStrokeRenderer = canvasStrokeRenderer,
-        getBrush = getBrush,
-    )
+    Box(modifier = modifier.fillMaxSize()) {
+        // Drawing surface
+        InkEditorSurface(
+            inProgressStrokesView = inProgressStrokesView,
+            finishedStrokesState = finishedStrokesState.value,
+            canvasStrokeRenderer = canvasStrokeRenderer,
+            getBrush = getBrush,
+        )
+
+        // Brush selector at the bottom
+        if (showBrushSelector) {
+            Box(
+                modifier = Modifier
+                    .align(androidx.compose.ui.Alignment.BottomCenter)
+                    .padding(bottom = 32.dp)
+            ) {
+                InkEditorBrushSelector(
+                    selectedBrushIndex = selectedBrushIndex.value,
+                    onBrushSelected = { index, option ->
+                        selectedBrushIndex.value = index
+                        brushColor.value = option.color
+                        brushSize.value = option.size
+                        brushFamily.value = when (option.family.lowercase()) {
+                            "marker" -> StockBrushes.marker()
+                            "highlighter" -> StockBrushes.highlighter()
+                            else -> StockBrushes.pressurePen()
+                        }
+                    }
+                )
+            }
+        }
+    }
 }
