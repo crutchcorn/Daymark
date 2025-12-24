@@ -277,6 +277,9 @@ fun InkEditor(
     val finishedStrokesState = remember { mutableStateOf(emptySet<Stroke>()) }
     val canvasStrokeRenderer = remember { CanvasStrokeRenderer.create() }
 
+    // Brush options state (mutable to allow color changes)
+    val brushOptions = remember { mutableStateOf(defaultBrushOptions) }
+
     // Brush configuration state
     val selectedBrushIndex = remember { mutableStateOf(0) }
     val brushFamily = remember { mutableStateOf(StockBrushes.pressurePen()) }
@@ -328,6 +331,7 @@ fun InkEditor(
             ) {
                 InkEditorBrushSelector(
                     selectedBrushIndex = selectedBrushIndex.value,
+                    brushOptions = brushOptions.value,
                     onBrushSelected = { index, option ->
                         selectedBrushIndex.value = index
                         brushColor.value = option.color
@@ -336,6 +340,21 @@ fun InkEditor(
                             "marker" -> StockBrushes.marker()
                             "highlighter" -> StockBrushes.highlighter()
                             else -> StockBrushes.pressurePen()
+                        }
+                    },
+                    onColorChanged = { index, newColor ->
+                        // Update the brush option with the new color
+                        val updatedOptions = brushOptions.value.toMutableList()
+                        val oldOption = updatedOptions[index]
+                        updatedOptions[index] = oldOption.copy(
+                            color = newColor.toArgb(),
+                            displayColor = newColor
+                        )
+                        brushOptions.value = updatedOptions
+
+                        // Also update the current brush color if this is the selected brush
+                        if (index == selectedBrushIndex.value) {
+                            brushColor.value = newColor.toArgb()
                         }
                     }
                 )

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -151,14 +153,19 @@ private fun PenShape(
 /**
  * A horizontal brush selector bar with rounded pill shape.
  * Displays multiple brush options that can be selected.
+ * Tapping on an already-selected brush opens a color picker popup.
  */
 @Composable
 fun InkEditorBrushSelector(
     selectedBrushIndex: Int,
     onBrushSelected: (index: Int, option: BrushOption) -> Unit,
+    onColorChanged: (index: Int, newColor: Color) -> Unit,
     modifier: Modifier = Modifier,
     brushOptions: List<BrushOption> = defaultBrushOptions
 ) {
+    val showColorPicker = remember { mutableStateOf(false) }
+    val colorPickerBrushIndex = remember { mutableStateOf(-1) }
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(32.dp))
@@ -173,7 +180,33 @@ fun InkEditorBrushSelector(
                 BrushItem(
                     option = option,
                     isSelected = index == selectedBrushIndex,
-                    onClick = { onBrushSelected(index, option) }
+                    onClick = {
+                        if (index == selectedBrushIndex) {
+                            // Tapped on already-selected brush, show color picker
+                            colorPickerBrushIndex.value = index
+                            showColorPicker.value = true
+                        } else {
+                            // Select this brush
+                            onBrushSelected(index, option)
+                        }
+                    }
+                )
+            }
+        }
+
+        // Show color picker popup when triggered
+        if (showColorPicker.value && colorPickerBrushIndex.value >= 0) {
+            val currentOption = brushOptions.getOrNull(colorPickerBrushIndex.value)
+            if (currentOption != null) {
+                InkEditorBrushColorSelector(
+                    selectedColor = currentOption.displayColor,
+                    onColorSelected = { newColor ->
+                        onColorChanged(colorPickerBrushIndex.value, newColor)
+                    },
+                    onDismiss = {
+                        showColorPicker.value = false
+                        colorPickerBrushIndex.value = -1
+                    }
                 )
             }
         }
