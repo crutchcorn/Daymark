@@ -1,0 +1,120 @@
+package app.drawmark.android.lib.ink
+
+import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.view.View
+import android.widget.FrameLayout
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.ink.authoring.InProgressStrokeId
+import androidx.ink.authoring.InProgressStrokesView
+import androidx.ink.brush.Brush
+import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
+import androidx.ink.strokes.Stroke
+import androidx.input.motionprediction.MotionEventPredictor
+
+@SuppressLint("ClickableViewAccessibility")
+@Composable
+fun InkEditorSurface(
+    inProgressStrokesView: InProgressStrokesView,
+    finishedStrokesState: Set<Stroke>,
+    canvasStrokeRenderer: CanvasStrokeRenderer,
+    getBrush: () -> Brush
+) {
+    val currentPointerId = remember { mutableStateOf<Int?>(null) }
+    val currentStrokeId = remember { mutableStateOf<InProgressStrokeId?>(null) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { context ->
+                val rootView = FrameLayout(context)
+
+                inProgressStrokesView.eagerInit()
+
+                val predictor = MotionEventPredictor.newInstance(rootView)
+                val touchListener = View.OnTouchListener { view, event ->
+                    predictor.record(event)
+                    val predictedEvent = predictor.predict()
+
+                    try {
+                        when (event.actionMasked) {
+                            MotionEvent.ACTION_DOWN -> {
+                                view.requestUnbufferedDispatch(event)
+                                val pointerIndex = event.actionIndex
+                                val pointerId = event.getPointerId(pointerIndex)
+                                currentPointerId.value = pointerId
+                                currentStrokeId.value = inProgressStrokesView.startStroke(
+                                    event = event,
+                                    pointerId = pointerId,
+                                    brush = getBrush()
+                                )
+                                true
+                            }
+
+                            MotionEvent.ACTION_MOVE -> {
+                                val pointerId = currentPointerId.value ?: return@OnTouchListener false
+                                val strokeId = currentStrokeId.value ?: return@OnTouchListener false
+
+                                for (pointerIndex in 0 until event.pointerCount) {
+                                    if (event.getPointerId(pointerIndex) != pointerId) continue
+                                    inProgressStrokesView.addToStroke(
+                                        event,
+                                        pointerId,
+                                        strokeId,
+                                        predictedEvent
+                                    )
+                                }
+                                true
+                            }
+
+                            MotionEvent.ACTION_UP -> {
+                                val pointerIndex = event.actionIndex
+                                val pointerId = event.getPointerId(pointerIndex)
+                                if (pointerId == currentPointerId.value) {
+                                    val strokeId = currentStrokeId.value
+                                    if (strokeId != null) {
+                                        inProgressStrokesView.finishStroke(
+                                            event,
+                                            pointerId,
+                                            strokeId
+                                        )
+                                    }
+                                    view.performClick()
+                                }
+                                true
+                            }
+
+                            MotionEvent.ACTION_CANCEL -> {
+                                val pointerIndex = event.actionIndex
+                                val pointerId = event.getPointerId(pointerIndex)
+                                if (pointerId == currentPointerId.value) {
+                                    val strokeId = currentStrokeId.value
+                                    if (strokeId != null) {
+                                        inProgressStrokesView.cancelStroke(strokeId, event)
+                                    }
+                                }
+                                true
+                            }
+
+                            else -> false
+                        }
+                    } finally {
+                        predictedEvent?.recycle()
+                    }
+                }
+
+                rootView.setOnTouchListener(touchListener)
+                rootView.addView(inProgressStrokesView)
+                rootView
+            }
+        )
+
+        InkDisplaySurface(finishedStrokesState, canvasStrokeRenderer)
+    }
+}

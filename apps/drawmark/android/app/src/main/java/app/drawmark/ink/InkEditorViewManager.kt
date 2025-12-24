@@ -1,17 +1,9 @@
-// SPDX-License-Identifier: MIT
-//
-// Drawmark - Ink Editor View Manager
-// InkEditorViewManager.kt
-//
-// React Native ViewManager for the InkEditorView component (supports editing).
-
 package app.drawmark.ink
 
 import android.graphics.Color
 import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
-import app.drawmark.android.lib.ink.InkEditorView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray

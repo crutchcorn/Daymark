@@ -1,5 +1,6 @@
-package app.drawmark.android.lib.ink
+package app.drawmark.android.prototype
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 
@@ -85,7 +89,7 @@ private fun PenShape(
     brushFamily: String,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.foundation.Canvas(modifier = modifier) {
+    Canvas(modifier = modifier) {
         val strokeColor = Color.White
         val fillColor = color
         
@@ -103,7 +107,7 @@ private fun PenShape(
 
         // Draw pen outline
         drawPath(
-            path = androidx.compose.ui.graphics.Path().apply {
+            path = Path().apply {
                 // Pen body - trapezoidal shape
                 moveTo(bodyLeft, bodyTop)
                 lineTo(bodyRight, bodyTop)
@@ -112,24 +116,24 @@ private fun PenShape(
                 close()
             },
             color = strokeColor,
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.5f)
+            style = Stroke(width = 2.5f)
         )
 
         // Draw the triangular tip
         drawPath(
-            path = androidx.compose.ui.graphics.Path().apply {
+            path = Path().apply {
                 moveTo(bodyLeft + width * 0.05f, bodyBottom)
                 lineTo(centerX, tipBottom)
                 lineTo(bodyRight - width * 0.05f, bodyBottom)
                 close()
             },
             color = strokeColor,
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.5f)
+            style = Stroke(width = 2.5f)
         )
 
         // Fill the tip with the brush color
         drawPath(
-            path = androidx.compose.ui.graphics.Path().apply {
+            path = Path().apply {
                 moveTo(bodyLeft + width * 0.1f, bodyBottom)
                 lineTo(centerX, tipBottom - height * 0.08f)
                 lineTo(bodyRight - width * 0.1f, bodyBottom)
@@ -142,8 +146,8 @@ private fun PenShape(
         if (brushFamily == "marker" || brushFamily == "highlighter") {
             drawLine(
                 color = strokeColor,
-                start = androidx.compose.ui.geometry.Offset(bodyLeft, bodyTop + height * 0.15f),
-                end = androidx.compose.ui.geometry.Offset(bodyRight, bodyTop + height * 0.15f),
+                start = Offset(bodyLeft, bodyTop + height * 0.15f),
+                end = Offset(bodyRight, bodyTop + height * 0.15f),
                 strokeWidth = 2f
             )
         }

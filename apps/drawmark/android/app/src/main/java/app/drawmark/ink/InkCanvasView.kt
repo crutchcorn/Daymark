@@ -1,33 +1,17 @@
-// SPDX-License-Identifier: MIT
-//
-// Drawmark - Ink Canvas View
-// InkCanvasView.kt
-//
-// A Jetpack Compose-based view for displaying ink strokes (read-only).
-// For editing capabilities, use InkEditorView instead.
-
-package app.drawmark.android.lib.ink
+package app.drawmark.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Matrix
 import android.widget.FrameLayout
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.Stroke
+import app.drawmark.android.lib.ink.InkDisplaySurface
+import app.drawmark.android.lib.ink.StrokeSerializer
 
-/**
- * InkCanvasView is a FrameLayout that embeds a Jetpack Compose surface
- * for displaying ink strokes (read-only, no drawing capabilities).
- * For editing capabilities, use InkEditorView instead.
- */
+
 @SuppressLint("ViewConstructor")
 class InkCanvasView(context: Context) : FrameLayout(context) {
     private val finishedStrokesState = mutableStateOf(emptySet<Stroke>())
@@ -93,26 +77,5 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
      */
     fun getSerializedStrokes(): String {
         return strokeSerializer.serializeStrokes(finishedStrokesState.value)
-    }
-}
-
-@Composable
-private fun InkDisplaySurface(
-    finishedStrokesState: Set<Stroke>,
-    canvasStrokeRenderer: CanvasStrokeRenderer
-) {
-    // Canvas for rendering finished strokes (read-only display)
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val canvasTransform = Matrix()
-        drawContext.canvas.nativeCanvas.concat(canvasTransform)
-        val canvas = drawContext.canvas.nativeCanvas
-
-        finishedStrokesState.forEach { stroke ->
-            canvasStrokeRenderer.draw(
-                stroke = stroke,
-                canvas = canvas,
-                strokeToScreenTransform = canvasTransform
-            )
-        }
     }
 }

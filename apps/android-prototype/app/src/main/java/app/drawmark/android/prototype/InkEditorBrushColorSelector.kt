@@ -1,4 +1,4 @@
-package app.drawmark.android.lib.ink
+package app.drawmark.android.prototype
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

@@ -7,8 +7,6 @@
 
 package app.drawmark.ink
 
-import app.drawmark.android.lib.ink.InkCanvasView
-import app.drawmark.android.lib.ink.InkEditorView
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext

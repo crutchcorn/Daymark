@@ -1,17 +1,8 @@
-// SPDX-License-Identifier: MIT
-//
-// Drawmark - Ink Canvas View Manager
-// InkCanvasViewManager.kt
-//
-// React Native ViewManager for the InkCanvasView component (read-only display).
-// For editing capabilities, use InkEditorViewManager instead.
-
 package app.drawmark.ink
 
 import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
-import app.drawmark.android.lib.ink.InkCanvasView
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.uimanager.SimpleViewManager

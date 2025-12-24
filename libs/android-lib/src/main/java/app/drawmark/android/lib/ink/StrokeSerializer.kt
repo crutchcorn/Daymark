@@ -1,10 +1,3 @@
-// SPDX-License-Identifier: MIT
-//
-// Drawmark - Stroke Serializer
-// StrokeSerializer.kt
-//
-// Serialization and deserialization utilities for Ink strokes.
-
 package app.drawmark.android.lib.ink
 
 import androidx.ink.brush.Brush
