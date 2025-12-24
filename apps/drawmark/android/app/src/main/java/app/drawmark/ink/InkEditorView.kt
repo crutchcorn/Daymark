@@ -30,21 +30,33 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
     // Callback for stroke changes
     var onStrokesChange: ((String) -> Unit)? = null
 
-    // Brush configuration
-    private var brushColor: Int = Color.Black.toArgb()
-    private var brushSize: Float = 5f
-    private var brushFamily = StockBrushes.pressurePen()
+    // Brush configuration - using mutableStateOf for reactive updates from React Native
+    private var brushColorState = mutableStateOf(Color.Black.toArgb())
+    private var brushSizeState = mutableStateOf(5f)
+    private var brushFamilyState = mutableStateOf(StockBrushes.pressurePen())
 
     init {
         inProgressStrokesView.addFinishedStrokesListener(this)
 
         val composeView = ComposeView(context).apply {
             setContent {
+                // Read state values inside the composable to trigger recomposition when they change
+                val currentBrushColor = brushColorState.value
+                val currentBrushSize = brushSizeState.value
+                val currentBrushFamily = brushFamilyState.value
+                
                 InkEditorSurface(
                     inProgressStrokesView = inProgressStrokesView,
                     finishedStrokesState = finishedStrokesState.value,
                     canvasStrokeRenderer = canvasStrokeRenderer,
-                    getBrush = { createBrush() }
+                    getBrush = {
+                        Brush.createWithColorIntArgb(
+                            family = currentBrushFamily,
+                            colorIntArgb = currentBrushColor,
+                            size = currentBrushSize,
+                            epsilon = 0.1f
+                        )
+                    }
                 )
             }
         }
@@ -54,9 +66,9 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
 
     private fun createBrush(): Brush {
         return Brush.createWithColorIntArgb(
-            family = brushFamily,
-            colorIntArgb = brushColor,
-            size = brushSize,
+            family = brushFamilyState.value,
+            colorIntArgb = brushColorState.value,
+            size = brushSizeState.value,
             epsilon = 0.1f
         )
     }
@@ -65,14 +77,14 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      * Sets the brush color using ARGB integer format.
      */
     fun setBrushColor(color: Int) {
-        brushColor = color
+        brushColorState.value = color
     }
 
     /**
      * Sets the brush stroke size.
      */
     fun setBrushSize(size: Float) {
-        brushSize = size
+        brushSizeState.value = size
     }
 
     /**
@@ -80,7 +92,7 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      * Supported values: "pen", "marker", "highlighter"
      */
     fun setBrushFamily(family: String) {
-        brushFamily = when (family.lowercase()) {
+        brushFamilyState.value = when (family.lowercase()) {
             "marker" -> StockBrushes.marker()
             "highlighter" -> StockBrushes.highlighter()
             else -> StockBrushes.pressurePen()

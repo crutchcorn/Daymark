@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.ink.authoring.InProgressStrokeId
@@ -28,6 +29,9 @@ fun InkEditorSurface(
 ) {
     val currentPointerId = remember { mutableStateOf<Int?>(null) }
     val currentStrokeId = remember { mutableStateOf<InProgressStrokeId?>(null) }
+    // Use rememberUpdatedState to always have the latest getBrush lambda
+    // This ensures the touch listener always uses the current brush settings
+    val currentGetBrush = rememberUpdatedState(getBrush)
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -52,7 +56,7 @@ fun InkEditorSurface(
                                 currentStrokeId.value = inProgressStrokesView.startStroke(
                                     event = event,
                                     pointerId = pointerId,
-                                    brush = getBrush()
+                                    brush = currentGetBrush.value()
                                 )
                                 true
                             }
