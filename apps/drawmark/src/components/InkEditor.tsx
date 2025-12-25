@@ -34,6 +34,14 @@ export interface InkEditorRef {
   loadStrokes: (strokesJson: string) => void;
 }
 
+export type InkEditorBrushFamily = 'pen' | 'marker' | 'highlighter';
+
+export interface InkEditorBrushInfo {
+  color: string;
+  size: number;
+  family: InkEditorBrushFamily;
+}
+
 export interface InkEditorProps {
   style?: StyleProp<ViewStyle>;
   /**
@@ -53,7 +61,7 @@ export interface InkEditorProps {
    * - "highlighter": Semi-transparent highlighter
    * @default "pen"
    */
-  brushFamily?: 'pen' | 'marker' | 'highlighter';
+  brushFamily?: InkEditorBrushFamily;
   /**
    * Initial strokes to load when the editor mounts.
    * This should be a JSON string from a previous save.
