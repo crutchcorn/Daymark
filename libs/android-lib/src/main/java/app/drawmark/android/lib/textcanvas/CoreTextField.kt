@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import app.drawmark.android.lib.textcanvas.handwriting.stylusHandwriting
 import app.drawmark.android.lib.textcanvas.input.internal.CoreTextFieldSemanticsModifier
 import app.drawmark.android.lib.textcanvas.input.internal.createLegacyPlatformTextInputServiceAdapter
 import app.drawmark.android.lib.textcanvas.input.internal.legacyTextInputAdapter
@@ -495,27 +494,6 @@ fun CoreTextField(
             imeAction = imeOptions.imeAction,
         )
 
-    val handwritingEnabled =
-        imeOptions.keyboardType != KeyboardType.Password &&
-            imeOptions.keyboardType != KeyboardType.NumberPassword
-    val stylusHandwritingModifier =
-        Modifier.stylusHandwriting(writeable, handwritingEnabled) {
-            // If this is a password field, we can't trigger handwriting.
-            // The expected behavior is 1) request focus 2) show software keyboard.
-            // Note: TextField will show software keyboard automatically when it
-            // gain focus. 3) show a toast message telling that handwriting is not
-            // supported for password fields. TODO(b/335294152)
-            if (handwritingEnabled) {
-                // TextInputService is calling LegacyTextInputServiceAdapter under the
-                // hood.  And because it's a public API, startStylusHandwriting is added
-                // to legacyTextInputServiceAdapter instead.
-                // startStylusHandwriting may be called before the actual input
-                // session starts when the editor is not focused, this is handled
-                // internally by the LegacyTextInputServiceAdapter.
-                legacyTextInputServiceAdapter.startStylusHandwriting()
-            }
-        }
-
     val autofillHighlightBrush =
         resolveAutofillHighlight(
             brush = LocalAutofillHighlightBrush.current,
@@ -540,7 +518,6 @@ fun CoreTextField(
         modifier
             .then(drawDecorationModifier)
             .legacyTextInputAdapter(legacyTextInputServiceAdapter, state, manager)
-            .then(stylusHandwritingModifier)
             .then(focusModifier)
             .interceptDPadAndMoveFocus(state, focusManager)
             .previewKeyEventToDeselectOnBack(state, manager)
