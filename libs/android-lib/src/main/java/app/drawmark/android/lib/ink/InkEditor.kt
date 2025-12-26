@@ -1,7 +1,6 @@
 package app.drawmark.android.lib.ink
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -181,12 +180,10 @@ fun InkEditorSurface(
                         awaitEachGesture {
                             val down = awaitFirstDown(requireUnconsumed = false)
                             val downPosition = down.position
-                            Log.d("InkEditorGesture", "Down at $downPosition")
 
                             // First, check if this is a handle hit
                             val handleHit = textFieldManager.hitTestHandle(downPosition)
                             if (handleHit != null) {
-                                Log.d("InkEditorGesture", "Handle hit: ${handleHit.handleType}")
                                 down.consume()
 
                                 // Start dragging the handle
@@ -218,7 +215,6 @@ fun InkEditorSurface(
                                 }
                             } catch (e: PointerEventTimeoutCancellationException) {
                                 // Long press detected
-                                Log.d("InkEditorGesture", "Long press at $downPosition")
                                 textFieldManager.handleLongPress(downPosition)
                                 // Wait for up to complete the gesture
                                 waitForUpOrCancellation()
@@ -237,13 +233,11 @@ fun InkEditorSurface(
                                     // Got a second tap - wait for up
                                     val secondUp = waitForUpOrCancellation()
                                     if (secondUp != null) {
-                                        Log.d("InkEditorGesture", "Double tap at ${secondDown.position}")
                                         textFieldManager.handleDoubleTap(secondDown.position)
                                     }
                                 }
                             } catch (e: PointerEventTimeoutCancellationException) {
                                 // Single tap
-                                Log.d("InkEditorGesture", "Single tap at $downPosition")
                                 if (!textFieldManager.handleTap(downPosition)) {
                                     // No text field was tapped - create a new one
                                     val newTextField = textFieldManager.addTextField(downPosition, "")

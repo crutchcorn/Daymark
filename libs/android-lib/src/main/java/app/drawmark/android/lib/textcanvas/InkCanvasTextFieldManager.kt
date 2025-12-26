@@ -1,7 +1,6 @@
 package app.drawmark.android.lib.textcanvas
 
 import android.graphics.Matrix
-import android.util.Log
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -245,7 +244,6 @@ class InkCanvasTextFieldManager {
                         textField.value.selection.start
                     ).inflate(touchTolerance)
                     if (startRect.contains(localPosition)) {
-                        Log.d("HandleDrag", "Hit START handle at $position (local: $localPosition)")
                         return HandleHitResult(textField, DraggingHandle.Start)
                     }
 
@@ -255,7 +253,6 @@ class InkCanvasTextFieldManager {
                         textField.value.selection.end
                     ).inflate(touchTolerance)
                     if (endRect.contains(localPosition)) {
-                        Log.d("HandleDrag", "Hit END handle at $position (local: $localPosition)")
                         return HandleHitResult(textField, DraggingHandle.End)
                     }
                 }
@@ -266,7 +263,6 @@ class InkCanvasTextFieldManager {
                         textField.value.selection.start
                     ).inflate(touchTolerance)
                     if (cursorRect.contains(localPosition)) {
-                        Log.d("HandleDrag", "Hit CURSOR handle at $position (local: $localPosition)")
                         return HandleHitResult(textField, DraggingHandle.Cursor)
                     }
                 }
@@ -282,7 +278,6 @@ class InkCanvasTextFieldManager {
      * Start dragging a handle.
      */
     fun startDraggingHandle(textField: CanvasTextFieldState, handleType: DraggingHandle) {
-        Log.d("HandleDrag", "Starting drag on ${handleType.name} handle")
         textField.draggingHandle = handleType
     }
 
@@ -302,8 +297,6 @@ class InkCanvasTextFieldManager {
         val localPosition = textField.canvasToLocal(position)
         val newOffset = layoutResult.getOffsetForPosition(localPosition)
 
-        Log.d("HandleDrag", "Drag update: ${handleType.name} -> offset $newOffset")
-
         when (handleType) {
             DraggingHandle.Start -> {
                 textField.updateSelectionStart(newOffset)
@@ -321,7 +314,6 @@ class InkCanvasTextFieldManager {
      * Stop dragging a handle.
      */
     fun stopDraggingHandle(textField: CanvasTextFieldState) {
-        Log.d("HandleDrag", "Stopping drag on ${textField.draggingHandle?.name} handle")
         textField.draggingHandle = null
     }
 

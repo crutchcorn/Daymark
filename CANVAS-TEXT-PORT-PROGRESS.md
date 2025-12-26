@@ -400,7 +400,7 @@ fun InkCanvasWithTextFields(
 - [ ] Migrate from `TextInputService` to `PlatformTextInputModifierNode`
 - [x] Implement word-by-word navigation (Ctrl+Arrow)
 - [x] Add UndoManager for Ctrl+Z/Y support
-- [ ] Implement visual selection handles
+- [x] Implement visual selection handles
 - [ ] Add drag-to-select gesture
 - [ ] Implement context menu on long-press
 - [ ] Add support for rich text (AnnotatedString with spans)
