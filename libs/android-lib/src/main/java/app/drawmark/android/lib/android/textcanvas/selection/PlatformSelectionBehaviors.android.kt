@@ -90,7 +90,7 @@ internal var PlatformSelectionBehaviorsFactory:
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal actual fun rememberPlatformSelectionBehaviors(
+internal fun rememberPlatformSelectionBehaviors(
     selectedTextType: SelectedTextType,
     localeList: LocaleList?,
 ): PlatformSelectionBehaviors? {

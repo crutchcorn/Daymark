@@ -336,9 +336,6 @@ private fun DisableCutCopy(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalTextToolbar provides copyDisabledToolbar, content)
 }
 
-/** Whether the underlying platform allows the reveal last typed behavior. */
-@Composable internal expect fun platformAllowsRevealLastTyped(): Boolean
-
 @Deprecated(
     message = "Please use the overload that takes in readOnly parameter.",
     level = DeprecationLevel.HIDDEN,

@@ -503,14 +503,6 @@ internal class TextFieldLayoutStateCache : State<TextLayoutResult?>, StateObject
 }
 
 /**
- * Returns the directionality of [locale]'s number system.
- *
- * We need to use the digit direction of the [locale] while deciding TextDirection if KeyboardType
- * is configured as [KeyboardType.Phone].
- */
-internal expect fun resolveTextDirectionForKeyboardTypePhone(locale: PlatformLocale): TextDirection
-
-/**
  * Efficiently concatenates two nullable lists. Semantically an empty list is equivalent to a null
  * list reference for this function.
  */

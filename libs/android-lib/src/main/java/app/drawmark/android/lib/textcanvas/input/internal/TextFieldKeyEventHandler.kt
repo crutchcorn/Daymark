@@ -36,12 +36,6 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import kotlin.jvm.JvmInline
 
-/** Factory function to create a platform specific [TextFieldKeyEventHandler]. */
-internal expect fun createTextFieldKeyEventHandler(): TextFieldKeyEventHandler
-
-/** Returns whether this key event is created by the software keyboard. */
-internal expect val KeyEvent.isFromSoftKeyboard: Boolean
-
 /**
  * Handles KeyEvents coming to a BasicTextField. This is mostly to support hardware keyboard but any
  * KeyEvent can also be sent by the IME or other platform systems.

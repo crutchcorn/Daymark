@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 private val DefaultSelectionColor = Color(0xFF4286F4)
 
 @Stable
-internal actual val DefaultTextSelectionColors =
+internal val DefaultTextSelectionColors =
     TextSelectionColors(
         handleColor = DefaultSelectionColor,
         backgroundColor = DefaultSelectionColor.copy(alpha = 0.4f),

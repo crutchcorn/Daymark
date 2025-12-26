@@ -21,7 +21,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.text.intl.PlatformLocale
 import androidx.compose.ui.text.style.TextDirection
 
-internal actual fun resolveTextDirectionForKeyboardTypePhone(
+internal fun resolveTextDirectionForKeyboardTypePhone(
     locale: PlatformLocale
 ): TextDirection {
     val digitDirection =

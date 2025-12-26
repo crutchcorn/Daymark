@@ -350,5 +350,3 @@ private fun distanceIsTolerable(
     val slop = viewConfiguration.pointerSlop(change1.type)
     return (change1.position - change2.position).getDistance() < slop
 }
-
-internal expect fun PointerEvent.isMouseOrTouchPad(): Boolean

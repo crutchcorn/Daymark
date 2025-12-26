@@ -36,7 +36,7 @@ import androidx.core.os.HandlerCompat
 private const val TAG = "BasicSecureTextField"
 
 @Composable
-internal actual fun platformAllowsRevealLastTyped(): Boolean {
+internal fun platformAllowsRevealLastTyped(): Boolean {
     val context = LocalContext.current
     val resolver =
         remember(context, contentResolverForSecureTextField) {

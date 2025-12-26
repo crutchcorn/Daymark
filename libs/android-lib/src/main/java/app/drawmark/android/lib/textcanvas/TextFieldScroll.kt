@@ -55,8 +55,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.min
 
-@Composable internal expect fun rememberTextFieldOverscrollEffect(): OverscrollEffect?
-
 // Scrollable
 internal fun Modifier.textFieldScrollable(
     scrollerPosition: TextFieldScrollerPosition,
@@ -112,15 +110,6 @@ internal fun Modifier.textFieldScrollable(
             )
         scroll
     }
-
-// Layout
-// Expect/actual is needed due to a different implementation in uikit
-internal expect fun Modifier.textFieldScroll(
-    scrollerPosition: TextFieldScrollerPosition,
-    textFieldValue: TextFieldValue,
-    visualTransformation: VisualTransformation,
-    textLayoutResultProvider: () -> TextLayoutResultProxy?,
-): Modifier
 
 internal fun Modifier.defaultTextFieldScroll(
     scrollerPosition: TextFieldScrollerPosition,

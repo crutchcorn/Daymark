@@ -21,6 +21,6 @@ import androidx.compose.ui.graphics.Color
 /**
  * Returns the color used to indicate Autofill has been performed on fillable components on Android.
  */
-internal actual fun autofillHighlightColor(): Color {
+internal fun autofillHighlightColor(): Color {
     return Color(0x4dffeb3b)
 }

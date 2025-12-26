@@ -29,4 +29,4 @@ import androidx.compose.ui.Modifier
  * b/171402426.
  */
 @Deprecated(message = "Avoid using if possible, see kdoc.", level = DeprecationLevel.WARNING)
-internal actual val isInTouchMode = true
+internal val isInTouchMode = true

@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 @VisibleForTesting internal const val TIA_DEBUG = false
 private const val TIA_TAG = "AndroidTextInputSession"
 
-internal actual suspend fun PlatformTextInputSession.platformSpecificTextInputSession(
+internal suspend fun PlatformTextInputSession.platformSpecificTextInputSession(
     state: TransformedTextFieldState,
     layoutState: TextLayoutState,
     imeOptions: ImeOptions,

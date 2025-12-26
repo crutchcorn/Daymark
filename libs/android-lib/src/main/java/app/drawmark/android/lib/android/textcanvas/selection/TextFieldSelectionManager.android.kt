@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 
 // We use composed{} to read a local, but don't provide inspector info because the underlying
 // magnifier modifier provides more meaningful inspector info.
-internal actual fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManager): Modifier {
+internal fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManager): Modifier {
     // Avoid tracking animation state on older Android versions that don't support magnifiers.
     if (!isPlatformMagnifierSupported()) {
         return this
@@ -73,7 +73,7 @@ internal actual fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManag
     }
 }
 
-internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
+internal fun Modifier.addBasicTextFieldTextContextMenuComponents(
     manager: TextFieldSelectionManager,
     coroutineScope: CoroutineScope,
 ): Modifier = addTextContextMenuComponentsWithContext { context ->
@@ -135,9 +135,9 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
     }
 }
 
-internal actual suspend fun TextFieldSelectionManager.hasAvailableTextToPaste(): Boolean =
+internal suspend fun TextFieldSelectionManager.hasAvailableTextToPaste(): Boolean =
     this.clipboard?.let { ClipboardUtils.hasText(it) } ?: false
 
-internal actual fun TextFieldSelectionManager.isSelectionHandleInVisibleBound(
+internal fun TextFieldSelectionManager.isSelectionHandleInVisibleBound(
     isStartHandle: Boolean
 ): Boolean = isSelectionHandleInVisibleBoundDefault(isStartHandle)

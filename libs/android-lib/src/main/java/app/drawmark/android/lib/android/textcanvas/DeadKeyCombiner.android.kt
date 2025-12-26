@@ -20,11 +20,11 @@ import android.view.KeyCharacterMap
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.utf16CodePoint
 
-internal actual class DeadKeyCombiner {
+internal class DeadKeyCombiner {
 
     private var deadKeyCode: Int? = null
 
-    actual fun consume(event: KeyEvent): Int? {
+    fun consume(event: KeyEvent): Int? {
         val codePoint = event.utf16CodePoint
         if (codePoint and KeyCharacterMap.COMBINING_ACCENT != 0) {
             deadKeyCode = codePoint and KeyCharacterMap.COMBINING_ACCENT_MASK

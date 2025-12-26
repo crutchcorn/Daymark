@@ -1753,14 +1753,6 @@ internal class TextFieldSelectionState(
     }
 }
 
-/** Runs platform-specific text tap gestures logic. */
-internal expect suspend fun TextFieldSelectionState.detectTextFieldTapGestures(
-    pointerInputScope: PointerInputScope,
-    interactionSource: MutableInteractionSource?,
-    requestFocus: () -> Unit,
-    showKeyboard: () -> Unit,
-)
-
 internal suspend fun TextFieldSelectionState.defaultDetectTextFieldTapGestures(
     pointerInputScope: PointerInputScope,
     interactionSource: MutableInteractionSource?,
@@ -1821,13 +1813,6 @@ internal suspend fun TextFieldSelectionState.defaultDetectTextFieldTapGestures(
         },
     )
 }
-
-/** Runs platform-specific text selection gestures logic. */
-internal expect suspend fun TextFieldSelectionState.textFieldSelectionGestures(
-    pointerInputScope: PointerInputScope,
-    mouseSelectionObserver: MouseSelectionObserver,
-    textDragObserver: TextDragObserver,
-)
 
 internal suspend fun PointerInputScope.defaultTextFieldSelectionGestures(
     mouseSelectionObserver: MouseSelectionObserver,
@@ -1926,25 +1911,4 @@ internal fun TextFieldSelectionState.contextMenuBuilder(
     if (isAutofillAvailable()) {
         textFieldItem(Autofill, enabled = availability.canAutofill)
     }
-}
-
-internal expect fun Modifier.addBasicTextFieldTextContextMenuComponents(
-    state: TextFieldSelectionState,
-    coroutineScope: CoroutineScope,
-): Modifier
-
-/**
- * The way we calculate whether something can be pasted from Clipboard can be different on each
- * platform due to Clipboard permissions and access warnings. Furthermore, [update] may want to
- * cache information to be able to evaluate [hasText] and [hasClip] more efficiently.
- *
- * Therefore, this class provides the necessary abstraction between platforms to help access
- * [Clipboard] more effectively.
- */
-internal expect class ClipboardPasteState(clipboard: Clipboard) {
-    val hasText: Boolean
-
-    val hasClip: Boolean
-
-    suspend fun update()
 }

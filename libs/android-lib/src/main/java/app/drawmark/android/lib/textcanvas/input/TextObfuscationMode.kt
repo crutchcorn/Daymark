@@ -53,11 +53,3 @@ value class TextObfuscationMode internal constructor(val value: Int) {
         val Hidden = TextObfuscationMode(2)
     }
 }
-
-/**
- * Platform dependent default obfuscation mode for secure text fields.
- *
- * This is set to [TextObfuscationMode.RevealLastTyped] on Android.
- */
-// TODO(b/425658491); Make this public
-internal expect val TextObfuscationMode.Companion.Default: TextObfuscationMode

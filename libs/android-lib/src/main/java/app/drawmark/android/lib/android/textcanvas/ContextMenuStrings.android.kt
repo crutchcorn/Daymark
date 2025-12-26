@@ -25,21 +25,21 @@ import androidx.compose.ui.platform.LocalResources
 
 @Immutable
 @JvmInline
-internal actual value class ContextMenuStrings actual constructor(actual val value: Int) {
-    actual companion object {
-        actual val Cut: ContextMenuStrings
+internal value class ContextMenuStrings constructor(actual val value: Int) {
+    companion object {
+        val Cut: ContextMenuStrings
             get() = ContextMenuStrings(android.R.string.cut)
 
-        actual val Copy: ContextMenuStrings
+        val Copy: ContextMenuStrings
             get() = ContextMenuStrings(android.R.string.copy)
 
-        actual val Paste: ContextMenuStrings
+        val Paste: ContextMenuStrings
             get() = ContextMenuStrings(android.R.string.paste)
 
-        actual val SelectAll: ContextMenuStrings
+        val SelectAll: ContextMenuStrings
             get() = ContextMenuStrings(android.R.string.selectAll)
 
-        actual val Autofill: ContextMenuStrings
+        val Autofill: ContextMenuStrings
             get() =
                 ContextMenuStrings(
                     if (Build.VERSION.SDK_INT <= 26) {
@@ -53,7 +53,7 @@ internal actual value class ContextMenuStrings actual constructor(actual val val
 
 @Composable
 @ReadOnlyComposable
-internal actual fun getString(string: ContextMenuStrings): String {
+internal fun getString(string: ContextMenuStrings): String {
     val resources = LocalResources.current
     return resources.getString(string.value)
 }

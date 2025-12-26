@@ -207,12 +207,6 @@ internal open class StylusHandwritingNode(var onHandwritingSlopExceeded: () -> U
     }
 }
 
-/**
- * Whether the platform supports the stylus handwriting or not. This is for platform level support
- * and NOT for checking whether the IME supports handwriting.
- */
-internal expect val isStylusHandwritingSupported: Boolean
-
 /** The amount of the padding added to the handwriting bounds of an editor. */
 internal val HandwritingBoundsVerticalOffset = 40.dp
 internal val HandwritingBoundsHorizontalOffset = 10.dp

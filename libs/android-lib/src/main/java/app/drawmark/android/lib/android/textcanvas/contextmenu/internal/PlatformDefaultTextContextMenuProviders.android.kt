@@ -32,7 +32,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 
 @Composable
-internal actual fun ProvideDefaultPlatformTextContextMenuProviders(
+internal fun ProvideDefaultPlatformTextContextMenuProviders(
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {

@@ -98,5 +98,3 @@ internal fun Modifier.cursor(
             }
         }
     else this
-
-internal expect val DefaultCursorThickness: Dp

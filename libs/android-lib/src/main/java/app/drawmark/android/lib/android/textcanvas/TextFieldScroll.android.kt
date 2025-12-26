@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 
-internal actual fun Modifier.textFieldScroll(
+internal fun Modifier.textFieldScroll(
     scrollerPosition: TextFieldScrollerPosition,
     textFieldValue: TextFieldValue,
     visualTransformation: VisualTransformation,
@@ -35,4 +35,4 @@ internal actual fun Modifier.textFieldScroll(
         textLayoutResultProvider,
     )
 
-@Composable internal actual fun rememberTextFieldOverscrollEffect(): OverscrollEffect? = null
+@Composable internal fun rememberTextFieldOverscrollEffect(): OverscrollEffect? = null

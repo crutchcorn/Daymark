@@ -1188,14 +1188,6 @@ internal fun merge(lhs: Selection?, rhs: Selection?): Selection? {
     return lhs?.merge(rhs) ?: rhs
 }
 
-internal expect fun isCopyKeyEvent(keyEvent: KeyEvent): Boolean
-
-internal expect fun Modifier.selectionMagnifier(manager: SelectionManager): Modifier
-
-internal expect fun Modifier.addSelectionContainerTextContextMenuComponents(
-    selectionManager: SelectionManager
-): Modifier
-
 internal fun SelectionManager.contextMenuBuilder(
     state: ContextMenuState
 ): ContextMenuScope.() -> Unit = {

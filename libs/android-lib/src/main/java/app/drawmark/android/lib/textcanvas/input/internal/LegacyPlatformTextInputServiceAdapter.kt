@@ -28,9 +28,6 @@ import androidx.compose.ui.platform.ViewConfiguration
 import androidx.compose.ui.text.input.PlatformTextInputService
 import kotlinx.coroutines.Job
 
-internal expect fun createLegacyPlatformTextInputServiceAdapter():
-    LegacyPlatformTextInputServiceAdapter
-
 /**
  * An implementation of the legacy [PlatformTextInputService] interface that delegates to a
  * [LegacyAdaptingPlatformTextInputModifierNode].

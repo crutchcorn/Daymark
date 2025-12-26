@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.ClipMetadata
 import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.platform.toClipMetadata
 
-internal actual fun textFieldDragAndDropNode(
+internal fun textFieldDragAndDropNode(
     hintMediaTypes: () -> Set<MediaType>,
     onDrop: (clipEntry: ClipEntry, clipMetadata: ClipMetadata) -> Boolean,
     dragAndDropRequestPermission: (DragAndDropEvent) -> Unit,

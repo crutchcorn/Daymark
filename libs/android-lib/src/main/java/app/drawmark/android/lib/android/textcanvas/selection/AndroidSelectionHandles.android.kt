@@ -55,7 +55,7 @@ import androidx.compose.ui.window.PopupProperties
 import kotlin.math.ceil
 
 @Composable
-internal actual fun SelectionHandle(
+internal fun SelectionHandle(
     offsetProvider: OffsetProvider,
     isStartHandle: Boolean,
     direction: ResolvedTextDirection,

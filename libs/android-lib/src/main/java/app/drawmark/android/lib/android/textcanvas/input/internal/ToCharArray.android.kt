@@ -18,7 +18,7 @@ package app.drawmark.android.lib.textcanvas.input.internal
 
 import app.drawmark.android.lib.textcanvas.input.TextFieldCharSequence
 
-internal actual fun CharSequence.toCharArray(
+internal fun CharSequence.toCharArray(
     destination: CharArray,
     destinationOffset: Int,
     startIndex: Int,

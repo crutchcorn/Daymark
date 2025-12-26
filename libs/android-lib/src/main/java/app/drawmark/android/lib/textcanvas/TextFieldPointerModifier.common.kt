@@ -28,24 +28,6 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.OffsetMapping
 
-/*
- * Marked @Composable to preserve state across recompositions and deliver updated parameters
- * to the pointer handling logic without restarting in-progress gestures.
- * Platform-specific actuals adapt gestures to native platform behavior, which differs from Compose behavior.
- * A non-composable signature would require recreating pointer input when parameters change,
- * which cancels active gestures.
- */
-@Composable
-internal expect fun Modifier.textFieldPointer(
-    manager: TextFieldSelectionManager,
-    enabled: Boolean,
-    interactionSource: MutableInteractionSource?,
-    state: LegacyTextFieldState,
-    focusRequester: FocusRequester,
-    readOnly: Boolean,
-    offsetMapping: OffsetMapping,
-): Modifier
-
 internal fun Modifier.defaultTextFieldPointer(
     manager: TextFieldSelectionManager,
     enabled: Boolean,

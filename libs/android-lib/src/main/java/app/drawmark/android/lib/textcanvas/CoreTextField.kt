@@ -1106,13 +1106,6 @@ internal fun TextFieldCursorHandle(manager: TextFieldSelectionManager) {
     }
 }
 
-@Composable
-internal expect fun CursorHandle(
-    offsetProvider: OffsetProvider,
-    modifier: Modifier,
-    minTouchTargetSize: DpSize = DpSize.Unspecified,
-)
-
 // TODO(b/262648050) Try to find a better API.
 private fun notifyFocusedRect(
     state: LegacyTextFieldState,

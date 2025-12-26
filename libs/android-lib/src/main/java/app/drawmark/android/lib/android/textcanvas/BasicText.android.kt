@@ -62,7 +62,7 @@ val LocalBackgroundTextMeasurementExecutor = staticCompositionLocalOf<Executor?>
 
 @Composable
 @NonRestartableComposable
-internal actual fun BackgroundTextMeasurement(
+internal fun BackgroundTextMeasurement(
     text: String,
     style: TextStyle,
     fontFamilyResolver: FontFamily.Resolver,
@@ -95,7 +95,7 @@ internal actual fun BackgroundTextMeasurement(
 
 @Composable
 @NonRestartableComposable
-internal actual fun BackgroundTextMeasurement(
+internal fun BackgroundTextMeasurement(
     text: AnnotatedString,
     style: TextStyle,
     fontFamilyResolver: FontFamily.Resolver,

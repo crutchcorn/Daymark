@@ -19,4 +19,4 @@ package app.drawmark.android.lib.textcanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-internal actual val DefaultCursorThickness: Dp = 2.dp
+internal val DefaultCursorThickness: Dp = 2.dp

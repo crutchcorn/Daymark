@@ -16,5 +16,5 @@
 
 package app.drawmark.android.lib.textcanvas.input
 
-internal actual val TextObfuscationMode.Companion.Default: TextObfuscationMode
+internal val TextObfuscationMode.Companion.Default: TextObfuscationMode
     get() = TextObfuscationMode.RevealLastTyped

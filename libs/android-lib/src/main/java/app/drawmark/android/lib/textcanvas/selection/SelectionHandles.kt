@@ -72,17 +72,6 @@ internal enum class SelectionHandleAnchor {
     Right,
 }
 
-@Composable
-internal expect fun SelectionHandle(
-    offsetProvider: OffsetProvider,
-    isStartHandle: Boolean,
-    direction: ResolvedTextDirection,
-    handlesCrossed: Boolean,
-    minTouchTargetSize: DpSize = DpSize.Unspecified,
-    lineHeight: Float,
-    modifier: Modifier,
-)
-
 /** Avoids boxing of [Offset] which is an inline value class. */
 internal fun interface OffsetProvider {
     fun provide(): Offset

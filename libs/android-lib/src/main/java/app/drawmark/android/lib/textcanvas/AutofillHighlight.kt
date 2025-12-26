@@ -21,13 +21,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 
-/**
- * Returns the color used to indicate Autofill has been performed on fillable components.
- *
- * See [LocalAutofillHighlightColor] to provide new values for this throughout the hierarchy.
- */
-internal expect fun autofillHighlightColor(): Color
-
 /** CompositionLocal used to change the highlight [Brush] used for autofilled components. */
 val LocalAutofillHighlightBrush =
     compositionLocalOf<Brush> {

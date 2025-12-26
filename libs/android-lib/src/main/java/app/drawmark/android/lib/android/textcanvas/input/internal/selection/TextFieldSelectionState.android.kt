@@ -38,7 +38,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 // TODO(halilibo): Add a new TextToolbar option "paste as plain text".
-internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
+internal fun Modifier.addBasicTextFieldTextContextMenuComponents(
     state: TextFieldSelectionState,
     coroutineScope: CoroutineScope,
 ): Modifier = addTextContextMenuComponentsWithContext { context ->
@@ -97,7 +97,7 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
 }
 
 /** Runs platform-specific text tap gestures logic. */
-internal actual suspend fun TextFieldSelectionState.detectTextFieldTapGestures(
+internal suspend fun TextFieldSelectionState.detectTextFieldTapGestures(
     pointerInputScope: PointerInputScope,
     interactionSource: MutableInteractionSource?,
     requestFocus: () -> Unit,
@@ -111,23 +111,23 @@ internal actual suspend fun TextFieldSelectionState.detectTextFieldTapGestures(
     )
 
 /** Runs platform-specific text selection gestures logic. */
-internal actual suspend fun TextFieldSelectionState.textFieldSelectionGestures(
+internal suspend fun TextFieldSelectionState.textFieldSelectionGestures(
     pointerInputScope: PointerInputScope,
     mouseSelectionObserver: MouseSelectionObserver,
     textDragObserver: TextDragObserver,
 ) = pointerInputScope.defaultTextFieldSelectionGestures(mouseSelectionObserver, textDragObserver)
 
-internal actual class ClipboardPasteState actual constructor(private val clipboard: Clipboard) {
+internal class ClipboardPasteState constructor(private val clipboard: Clipboard) {
     private var _hasClip: Boolean = false
     private var _hasText: Boolean = false
 
-    actual val hasText: Boolean
+    val hasText: Boolean
         get() = _hasText
 
-    actual val hasClip: Boolean
+    val hasClip: Boolean
         get() = _hasClip
 
-    actual suspend fun update() {
+    suspend fun update() {
         // On Android, we don't need to read `clipEntry` to evaluate `canPaste`.
         // Reading `clipEntry` directly can trigger a "App pasted from Clipboard" system warning.
         _hasClip = clipboard.nativeClipboard.hasPrimaryClip()

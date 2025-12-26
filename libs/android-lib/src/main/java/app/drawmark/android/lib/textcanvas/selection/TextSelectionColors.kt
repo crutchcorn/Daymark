@@ -62,5 +62,3 @@ class TextSelectionColors(val handleColor: Color, val backgroundColor: Color) {
  * in the hierarchy.
  */
 val LocalTextSelectionColors = compositionLocalOf { DefaultTextSelectionColors }
-
-@Stable internal expect val DefaultTextSelectionColors: TextSelectionColors

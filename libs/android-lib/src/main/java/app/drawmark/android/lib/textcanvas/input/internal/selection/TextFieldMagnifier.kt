@@ -51,14 +51,6 @@ internal abstract class TextFieldMagnifierNode :
     override fun SemanticsPropertyReceiver.applySemantics() {}
 }
 
-@Suppress("ModifierFactoryExtensionFunction", "ModifierFactoryReturnType")
-internal expect fun textFieldMagnifierNode(
-    textFieldState: TransformedTextFieldState,
-    textFieldSelectionState: TextFieldSelectionState,
-    textLayoutState: TextLayoutState,
-    visible: Boolean,
-): TextFieldMagnifierNode
-
 internal fun calculateSelectionMagnifierCenterAndroid(
     textFieldState: TransformedTextFieldState,
     selectionState: TextFieldSelectionState,

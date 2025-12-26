@@ -20,8 +20,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 internal val SNAPSHOTS_INTERVAL_MILLIS = 5000
 
-internal expect fun timeNowMillis(): Long
-
 /**
  * It keeps last snapshots of [TextFieldValue]. The total number of kept snapshots is limited but
  * total number of characters in them and should not be more than [maxStoredCharacters] We add a new

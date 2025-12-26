@@ -19,7 +19,7 @@ package app.drawmark.android.lib.textcanvas
 import androidx.emoji2.text.EmojiCompat
 import java.text.BreakIterator
 
-internal actual fun String.findPrecedingBreak(index: Int): Int {
+internal fun String.findPrecedingBreak(index: Int): Int {
     val emojiBreak =
         getEmojiCompatIfLoaded()?.getEmojiStart(this, maxOf(0, index - 1))?.takeUnless { it == -1 }
     if (emojiBreak != null) return emojiBreak
@@ -29,7 +29,7 @@ internal actual fun String.findPrecedingBreak(index: Int): Int {
     return it.preceding(index)
 }
 
-internal actual fun String.findFollowingBreak(index: Int): Int {
+internal fun String.findFollowingBreak(index: Int): Int {
     val emojiBreak = getEmojiCompatIfLoaded()?.getEmojiEnd(this, index)?.takeUnless { it == -1 }
     if (emojiBreak != null) return emojiBreak
 
@@ -46,7 +46,7 @@ private fun CharSequence.findCodePointBefore(index: Int, ifNotFound: Int): Int =
     if (index <= 0) ifNotFound
     else java.lang.Character.offsetByCodePoints(this, index, /* codePointOffset= */ -1)
 
-internal actual fun String.findCodePointOrEmojiStartBefore(index: Int, ifNotFound: Int): Int {
+internal fun String.findCodePointOrEmojiStartBefore(index: Int, ifNotFound: Int): Int {
     if (index <= 0) return ifNotFound
 
     val emojiCompat = getEmojiCompatIfLoaded()

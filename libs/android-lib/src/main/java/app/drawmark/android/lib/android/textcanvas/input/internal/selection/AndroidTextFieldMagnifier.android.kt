@@ -188,7 +188,7 @@ internal class TextFieldMagnifierNodeImpl28(
  * whether magnifier is supported.
  */
 @SuppressLint("ModifierFactoryExtensionFunction", "ModifierFactoryReturnType")
-internal actual fun textFieldMagnifierNode(
+internal fun textFieldMagnifierNode(
     textFieldState: TransformedTextFieldState,
     textFieldSelectionState: TextFieldSelectionState,
     textLayoutState: TextLayoutState,

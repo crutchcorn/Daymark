@@ -18,5 +18,5 @@ package app.drawmark.android.lib.textcanvas.handwriting
 
 import android.os.Build
 
-internal actual val isStylusHandwritingSupported: Boolean =
+internal val isStylusHandwritingSupported: Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE

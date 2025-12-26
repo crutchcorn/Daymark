@@ -21,7 +21,7 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.util.fastAll
 
-internal actual fun PointerEvent.isMouseOrTouchPad(): Boolean {
+internal fun PointerEvent.isMouseOrTouchPad(): Boolean {
     // There isn't a reliable way to check if the event is from a touchpad device.
     // On Android, touchpad events are disguised as MotionEvent.TOOL_TYPE_FINGER
     // and InputDevice.SOURCE_MOUSE events. However, its source is not reported as

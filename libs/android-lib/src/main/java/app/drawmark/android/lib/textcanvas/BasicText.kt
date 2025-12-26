@@ -721,28 +721,3 @@ private fun LayoutWithLinksAndInlineContent(
             },
     )
 }
-
-/**
- * This function pre-measures the text on Android platform to warm the platform text layout cache in
- * a background thread before the actual text layout begins.
- */
-@Composable
-@NonRestartableComposable
-internal expect fun BackgroundTextMeasurement(
-    text: String,
-    style: TextStyle,
-    fontFamilyResolver: FontFamily.Resolver,
-)
-
-/**
- * This function pre-measures the text on Android platform to warm the platform text layout cache in
- * a background thread before the actual text layout begins.
- */
-@Composable
-@NonRestartableComposable
-internal expect fun BackgroundTextMeasurement(
-    text: AnnotatedString,
-    style: TextStyle,
-    fontFamilyResolver: FontFamily.Resolver,
-    placeholders: List<AnnotatedString.Range<Placeholder>>?,
-)

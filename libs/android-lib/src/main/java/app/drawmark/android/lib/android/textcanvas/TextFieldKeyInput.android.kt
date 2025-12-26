@@ -18,7 +18,7 @@ package app.drawmark.android.lib.textcanvas
 
 import androidx.compose.ui.input.key.KeyEvent
 
-internal actual val KeyEvent.isTypedEvent: Boolean
+internal val KeyEvent.isTypedEvent: Boolean
     get() =
         nativeKeyEvent.action == android.view.KeyEvent.ACTION_DOWN &&
             !Character.isISOControl(nativeKeyEvent.unicodeChar)

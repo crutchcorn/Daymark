@@ -18,5 +18,5 @@ package app.drawmark.android.lib.textcanvas
 
 import androidx.compose.ui.input.pointer.PointerIcon
 
-internal actual val handwritingPointerIcon: PointerIcon =
+internal val handwritingPointerIcon: PointerIcon =
     PointerIcon(android.view.PointerIcon.TYPE_HANDWRITING)

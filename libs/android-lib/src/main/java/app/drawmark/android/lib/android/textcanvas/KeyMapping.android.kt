@@ -22,7 +22,7 @@ import androidx.compose.ui.input.key.isAltPressed
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 
-internal actual val platformDefaultKeyMapping =
+internal val platformDefaultKeyMapping =
     object : KeyMapping {
         override fun map(event: KeyEvent): KeyCommand? =
             when {

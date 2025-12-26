@@ -44,7 +44,7 @@ import androidx.compose.ui.input.key.type
  *
  * NOTE: Key events from non-dpad sources or virtual keyboards are ignored.
  */
-internal actual fun Modifier.interceptDPadAndMoveFocus(
+internal fun Modifier.interceptDPadAndMoveFocus(
     state: LegacyTextFieldState,
     focusManager: FocusManager,
 ): Modifier {

@@ -22,21 +22,21 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 @JvmInline
-internal actual value class ContextMenuIcons actual constructor(actual val value: Int) {
-    actual companion object {
-        actual val ActionModeCutDrawable: ContextMenuIcons
+internal value class ContextMenuIcons constructor(actual val value: Int) {
+    companion object {
+        val ActionModeCutDrawable: ContextMenuIcons
             get() = ContextMenuIcons(R.attr.actionModeCutDrawable)
 
-        actual val ActionModeCopyDrawable: ContextMenuIcons
+        val ActionModeCopyDrawable: ContextMenuIcons
             get() = ContextMenuIcons(R.attr.actionModeCopyDrawable)
 
-        actual val ActionModePasteDrawable: ContextMenuIcons
+        val ActionModePasteDrawable: ContextMenuIcons
             get() = ContextMenuIcons(R.attr.actionModePasteDrawable)
 
-        actual val ActionModeSelectAllDrawable: ContextMenuIcons
+        val ActionModeSelectAllDrawable: ContextMenuIcons
             get() = ContextMenuIcons(R.attr.actionModeSelectAllDrawable)
 
-        actual val ID_NULL: ContextMenuIcons
+        val ID_NULL: ContextMenuIcons
             get() = ContextMenuIcons(Resources.ID_NULL)
     }
 }

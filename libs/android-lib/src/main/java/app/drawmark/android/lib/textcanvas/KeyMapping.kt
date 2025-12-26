@@ -27,10 +27,6 @@ internal interface KeyMapping {
     fun map(event: KeyEvent): KeyCommand?
 }
 
-// each platform can define its own key mapping, on Android its just defaultKeyMapping, but on
-// desktop, the value depends on the current OS
-internal expect val platformDefaultKeyMapping: KeyMapping
-
 // It's common for all platforms key mapping
 internal fun commonKeyMapping(shortcutModifier: (KeyEvent) -> Boolean): KeyMapping {
     return object : KeyMapping {

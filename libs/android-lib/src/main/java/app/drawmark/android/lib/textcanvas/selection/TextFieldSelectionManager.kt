@@ -1368,27 +1368,11 @@ internal fun TextFieldSelectionHandle(
     )
 }
 
-/** Whether the selection handle is in the visible bound of the TextField. */
-internal expect fun TextFieldSelectionManager.isSelectionHandleInVisibleBound(
-    isStartHandle: Boolean
-): Boolean
-
 internal fun TextFieldSelectionManager.isSelectionHandleInVisibleBoundDefault(
     isStartHandle: Boolean
 ): Boolean =
     state?.layoutCoordinates?.visibleBounds()?.containsInclusive(getHandlePosition(isStartHandle))
         ?: false
-
-/**
- * Optionally shows a magnifier widget, if the current platform supports it, for the current state
- * of a [TextFieldSelectionManager]. Should check [TextFieldSelectionManager.draggingHandle] to see
- * which handle is being dragged and then calculate the magnifier position for that handle.
- *
- * Actual implementations should as much as possible actually live in this common source set, _not_
- * the platform-specific source sets. The actual implementations of this function should then just
- * delegate to those functions.
- */
-internal expect fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManager): Modifier
 
 /** @return the location of the magnifier relative to the inner text field coordinates */
 internal fun calculateSelectionMagnifierCenterAndroid(
@@ -1449,11 +1433,6 @@ internal fun calculateSelectionMagnifierCenterAndroid(
     return Offset(centerX, centerY)
 }
 
-internal expect fun Modifier.addBasicTextFieldTextContextMenuComponents(
-    manager: TextFieldSelectionManager,
-    coroutineScope: CoroutineScope,
-): Modifier
-
 internal fun TextFieldSelectionManager.contextMenuBuilder(
     contextMenuState: ContextMenuState,
     itemsAvailability: State<MenuItemsAvailability>,
@@ -1471,16 +1450,3 @@ internal fun TextFieldSelectionManager.contextMenuBuilder(
         textFieldItem(Autofill, enabled = availability.canAutofill) { autofill() }
     }
 }
-
-/**
- * This method checks if it makes sense to show the "Paste" item in the context menu based on the
- * state of the [TextFieldSelectionManager.clipboard]. The returned value might be not enough -
- * there can be other conditions affecting the necessity for the "Paste" item.
- *
- * Note: Currently on web it will always return true. This mitigates the UX issue when a Clipboard
- * read permission is requested when a user has no intention to 'Paste' (e.g. before the context
- * menu is shown, regardless of "Paste" possibility). The downside is that it will show the 'Paste'
- * item even when there is nothing to paste. But we consider it to be a better Context Menu /
- * Toolbar UX than the alternative.
- */
-internal expect suspend fun TextFieldSelectionManager.hasAvailableTextToPaste(): Boolean

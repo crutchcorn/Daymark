@@ -869,16 +869,3 @@ internal class TextFieldDecoratorModifierNode(
             else -> false
         }
 }
-
-/** Runs platform-specific text input logic. */
-internal expect suspend fun PlatformTextInputSession.platformSpecificTextInputSession(
-    state: TransformedTextFieldState,
-    layoutState: TextLayoutState,
-    imeOptions: ImeOptions,
-    receiveContentConfiguration: ReceiveContentConfiguration?,
-    onImeAction: ((ImeAction) -> Unit)?,
-    updateSelectionState: (() -> Unit)? = null,
-    stylusHandwritingTrigger: MutableSharedFlow<Unit>? = null,
-    viewConfiguration: ViewConfiguration? = null,
-    updateTouchMode: (Boolean) -> Unit,
-): Nothing

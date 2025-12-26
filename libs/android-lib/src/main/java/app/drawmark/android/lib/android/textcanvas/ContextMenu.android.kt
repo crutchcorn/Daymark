@@ -28,7 +28,7 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal actual fun ContextMenuArea(
+internal fun ContextMenuArea(
     manager: TextFieldSelectionManager,
     content: @Composable () -> Unit,
 ) {
@@ -37,7 +37,7 @@ internal actual fun ContextMenuArea(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal actual fun ContextMenuArea(
+internal fun ContextMenuArea(
     selectionState: TextFieldSelectionState,
     enabled: Boolean,
     content: @Composable () -> Unit,
@@ -47,7 +47,7 @@ internal actual fun ContextMenuArea(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal actual fun ContextMenuArea(manager: SelectionManager, content: @Composable () -> Unit) {
+internal fun ContextMenuArea(manager: SelectionManager, content: @Composable () -> Unit) {
     CommonContextMenuArea(manager, content)
 }
 

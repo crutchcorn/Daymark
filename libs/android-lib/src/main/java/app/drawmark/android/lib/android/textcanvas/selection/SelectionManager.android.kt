@@ -37,12 +37,12 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 
-internal actual fun isCopyKeyEvent(keyEvent: KeyEvent) =
+internal fun isCopyKeyEvent(keyEvent: KeyEvent) =
     platformDefaultKeyMapping.map(keyEvent) == KeyCommand.COPY
 
 // We use composed{} to read a local, but don't provide inspector info because the underlying
 // magnifier modifier provides more meaningful inspector info.
-internal actual fun Modifier.selectionMagnifier(manager: SelectionManager): Modifier {
+internal fun Modifier.selectionMagnifier(manager: SelectionManager): Modifier {
     // Avoid tracking animation state on older Android versions that don't support magnifiers.
     if (!isPlatformMagnifierSupported()) {
         return this
@@ -70,7 +70,7 @@ internal actual fun Modifier.selectionMagnifier(manager: SelectionManager): Modi
     }
 }
 
-internal actual fun Modifier.addSelectionContainerTextContextMenuComponents(
+internal fun Modifier.addSelectionContainerTextContextMenuComponents(
     selectionManager: SelectionManager
 ): Modifier = addTextContextMenuComponentsWithContext { context ->
     fun TextContextMenuBuilderScope.selectionContainerItem(

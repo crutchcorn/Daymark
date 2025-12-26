@@ -35,14 +35,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 
-// AWT and Android have similar but different key event models. In android there are two main
-// types of events: ACTION_DOWN and ACTION_UP. In AWT there is additional KEY_TYPED which should
-// be used to get "typed character". By this simple function we are introducing common
-// denominator for both systems: if KeyEvent.isTypedEvent then it's safe to use
-// KeyEvent.utf16CodePoint
-@Suppress("KmpVisibilityMismatch") // public in commonStubs
-internal expect val KeyEvent.isTypedEvent: Boolean
-
 /**
  * It handles [KeyEvent]s and either process them as typed events or maps to [KeyCommand] via
  * [KeyMapping]. [KeyCommand] then is executed using utility class [TextFieldPreparedSelection]
