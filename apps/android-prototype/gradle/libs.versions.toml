@@ -2,7 +2,9 @@
 
 [versions]
 activityCompose = "1.12.2"
+foundation = "1.10.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
