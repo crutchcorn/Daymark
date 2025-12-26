@@ -9,6 +9,9 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.Stroke
 
+// TODO: This composable was originally meant to handle displaying our contents for us, but now I'm
+//   wondering if we should use this instead:
+//   @see https://developer.android.com/reference/kotlin/androidx/ink/rendering/android/view/ViewStrokeRenderer
 @Composable
 fun InkDisplaySurface(
     finishedStrokesState: Set<Stroke>,
