@@ -25,7 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isAltPressed
 import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.isShiftPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -180,9 +182,14 @@ fun CanvasTextField(
     // Handle IME input
     val onEditCommand: (List<EditCommand>) -> Unit = remember(state) {
         { commands ->
+            val preValue = state.value
             var currentValue = state.value
             commands.forEach { command ->
                 currentValue = command.applyTo(currentValue)
+            }
+            // Record undo if text actually changed
+            if (preValue.text != currentValue.text) {
+                state.undoManager.recordChange(preValue, currentValue)
             }
             state.updateValue(currentValue)
             currentOnValueChange(currentValue)
@@ -275,7 +282,7 @@ fun CanvasTextField(
             isCtrl && keyEvent.key == Key.X -> {
                 if (state.hasSelection && !readOnly) {
                     clipboardManager.setText(AnnotatedString(state.selectedText))
-                    state.deleteSelection()
+                    state.deleteSelection(allowMerge = false)
                     currentOnValueChange(state.value)
                 }
                 true
@@ -285,7 +292,7 @@ fun CanvasTextField(
             isCtrl && keyEvent.key == Key.V -> {
                 if (!readOnly) {
                     clipboardManager.getText()?.let { text ->
-                        state.insertText(text.text)
+                        state.insertText(text.text, allowMerge = false)
                         currentOnValueChange(state.value)
                     }
                 }

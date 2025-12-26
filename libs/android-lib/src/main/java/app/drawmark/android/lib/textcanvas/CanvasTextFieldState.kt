@@ -38,11 +38,6 @@ class CanvasTextFieldState(
      */
     val undoManager = UndoManager()
 
-    init {
-        // Initialize undo manager with the initial value
-        undoManager.initialize(initialValue)
-    }
-
     /**
      * The text content as a simple string.
      */
@@ -234,17 +229,21 @@ class CanvasTextFieldState(
 
     /**
      * Insert text at the current cursor position, replacing any selection.
+     * @param textToInsert The text to insert
+     * @param allowMerge Whether to allow merging with previous undo operations (false for paste)
      */
-    fun insertText(textToInsert: String) {
-        undoManager.recordChange(value)
+    fun insertText(textToInsert: String, allowMerge: Boolean = true) {
+        val preValue = value
         val beforeSelection = value.text.substring(0, value.selection.min)
         val afterSelection = value.text.substring(value.selection.max)
         val newText = beforeSelection + textToInsert + afterSelection
         val newCursorPosition = beforeSelection.length + textToInsert.length
-        value = TextFieldValue(
+        val postValue = TextFieldValue(
             text = newText,
             selection = TextRange(newCursorPosition)
         )
+        undoManager.recordChange(preValue, postValue, allowMerge)
+        value = postValue
     }
 
     /**
@@ -256,13 +255,15 @@ class CanvasTextFieldState(
             deleteSelection()
             true
         } else if (value.selection.start > 0) {
-            undoManager.recordChange(value)
+            val preValue = value
             val beforeCursor = value.text.substring(0, value.selection.start - 1)
             val afterCursor = value.text.substring(value.selection.start)
-            value = TextFieldValue(
+            val postValue = TextFieldValue(
                 text = beforeCursor + afterCursor,
                 selection = TextRange(beforeCursor.length)
             )
+            undoManager.recordChange(preValue, postValue)
+            value = postValue
             true
         } else {
             false
@@ -278,13 +279,15 @@ class CanvasTextFieldState(
             deleteSelection()
             true
         } else if (value.selection.start < value.text.length) {
-            undoManager.recordChange(value)
+            val preValue = value
             val beforeCursor = value.text.substring(0, value.selection.start)
             val afterCursor = value.text.substring(value.selection.start + 1)
-            value = TextFieldValue(
+            val postValue = TextFieldValue(
                 text = beforeCursor + afterCursor,
                 selection = TextRange(beforeCursor.length)
             )
+            undoManager.recordChange(preValue, postValue)
+            value = postValue
             true
         } else {
             false
@@ -292,17 +295,85 @@ class CanvasTextFieldState(
     }
 
     /**
-     * Delete the currently selected text.
+     * Delete the word before the cursor (Alt+Backspace).
+     * @return true if text was deleted, false if nothing to delete
      */
-    fun deleteSelection() {
+    fun deleteWordBackward(): Boolean {
+        return if (hasSelection) {
+            deleteSelection()
+            true
+        } else if (value.selection.start > 0) {
+            val preValue = value
+            val wordStart = findPreviousWordBoundary(value.text, value.selection.start)
+            val beforeWord = value.text.substring(0, wordStart)
+            val afterCursor = value.text.substring(value.selection.start)
+            val postValue = TextFieldValue(
+                text = beforeWord + afterCursor,
+                selection = TextRange(wordStart)
+            )
+            undoManager.recordChange(preValue, postValue, allowMerge = false)
+            value = postValue
+            true
+        } else {
+            false
+        }
+    }
+
+    /**
+     * Delete from cursor to the beginning of the line (Meta/Cmd+Backspace).
+     * @return true if text was deleted, false if nothing to delete
+     */
+    fun deleteToLineStart(): Boolean {
+        return if (hasSelection) {
+            deleteSelection()
+            true
+        } else if (value.selection.start > 0) {
+            val preValue = value
+            val lineStart = findLineStart(value.text, value.selection.start)
+            val beforeLine = value.text.substring(0, lineStart)
+            val afterCursor = value.text.substring(value.selection.start)
+            val postValue = TextFieldValue(
+                text = beforeLine + afterCursor,
+                selection = TextRange(lineStart)
+            )
+            undoManager.recordChange(preValue, postValue, allowMerge = false)
+            value = postValue
+            true
+        } else {
+            false
+        }
+    }
+
+    /**
+     * Find the start of the current line from the given position.
+     */
+    private fun findLineStart(text: String, position: Int): Int {
+        if (position <= 0) return 0
+        
+        var pos = position - 1
+        while (pos > 0 && text[pos] != '\n') {
+            pos--
+        }
+        
+        // If we found a newline, the line starts after it
+        return if (pos > 0 || text[pos] == '\n') pos + 1 else 0
+    }
+
+    /**
+     * Delete the currently selected text.
+     * @param allowMerge Whether to allow merging with previous undo operations (false for cut)
+     */
+    fun deleteSelection(allowMerge: Boolean = true) {
         if (hasSelection) {
-            undoManager.recordChange(value)
+            val preValue = value
             val beforeSelection = value.text.substring(0, value.selection.min)
             val afterSelection = value.text.substring(value.selection.max)
-            value = TextFieldValue(
+            val postValue = TextFieldValue(
                 text = beforeSelection + afterSelection,
                 selection = TextRange(beforeSelection.length)
             )
+            undoManager.recordChange(preValue, postValue, allowMerge)
+            value = postValue
         }
     }
 
