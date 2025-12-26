@@ -589,6 +589,31 @@ class CanvasTextDelegate(
         }
 
         /**
+         * Get the bounding rect for just the circle part of a cursor handle.
+         * Used for hit testing taps that should trigger context menu.
+         */
+        fun getCursorHandleCircleRect(
+            textLayoutResult: TextLayoutResult,
+            cursorOffset: Int,
+            radius: Float = HANDLE_RADIUS,
+            stemHeight: Float = HANDLE_STEM_HEIGHT
+        ): Rect {
+            val cursorRect = textLayoutResult.getCursorRect(cursorOffset)
+            val handleTop = cursorRect.bottom
+            val circleCenter = Offset(
+                x = cursorRect.left + DEFAULT_CURSOR_WIDTH / 2,
+                y = handleTop + stemHeight + radius
+            )
+            // Only the circle area, not including the stem
+            return Rect(
+                left = circleCenter.x - radius,
+                top = circleCenter.y - radius,
+                right = circleCenter.x + radius,
+                bottom = circleCenter.y + radius
+            )
+        }
+
+        /**
          * Create or update a CanvasTextDelegate if parameters changed.
          */
         fun updateDelegate(

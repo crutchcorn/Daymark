@@ -219,8 +219,11 @@ fun InkEditorSurface(
                                     textFieldManager.stopDraggingHandle(handleHit.textField)
                                 } else {
                                     // User tapped on the handle (released without dragging past slop)
-                                    // Show context menu for cursor handle tap
-                                    textFieldManager.showContextMenuForTextField(handleHit.textField)
+                                    // Only show context menu if tapping on the circle part of cursor handle
+                                    if (handleHit.handleType == app.drawmark.android.lib.textcanvas.DraggingHandle.Cursor &&
+                                        textFieldManager.hitTestCursorHandleCircle(handleHit.textField, downPosition)) {
+                                        textFieldManager.showContextMenuForTextField(handleHit.textField)
+                                    }
                                 }
                                 return@awaitEachGesture
                             }

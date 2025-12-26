@@ -309,12 +309,13 @@ class InkCanvasTextFieldManager {
                     }
                 }
                 HandleState.Cursor -> {
-                    // Check cursor handle
-                    val cursorRect = CanvasTextDelegate.getCursorHandleRect(
+                    // Check cursor handle - only the circle part, not the stem
+                    // This ensures taps on the blinking cursor line don't trigger handle behavior
+                    val cursorCircleRect = CanvasTextDelegate.getCursorHandleCircleRect(
                         layoutResult,
                         textField.value.selection.start
                     ).inflate(touchTolerance)
-                    if (cursorRect.contains(localPosition)) {
+                    if (cursorCircleRect.contains(localPosition)) {
                         return HandleHitResult(textField, DraggingHandle.Cursor)
                     }
                 }
@@ -324,6 +325,29 @@ class InkCanvasTextFieldManager {
             }
         }
         return null
+    }
+
+    /**
+     * Check if a position hits the circle part of a cursor handle.
+     * This is used to determine if tapping should show the context menu.
+     * 
+     * @param textField The text field to check
+     * @param position The position in canvas coordinates
+     * @return true if the circle part of the cursor handle was hit
+     */
+    fun hitTestCursorHandleCircle(textField: CanvasTextFieldState, position: Offset): Boolean {
+        if (textField.handleState != HandleState.Cursor) return false
+        
+        val layoutResult = textField.textLayoutResult ?: return false
+        val touchTolerance = 24f
+        
+        val localPosition = textField.canvasToLocal(position)
+        val circleRect = CanvasTextDelegate.getCursorHandleCircleRect(
+            layoutResult,
+            textField.value.selection.start
+        ).inflate(touchTolerance)
+        
+        return circleRect.contains(localPosition)
     }
 
     /**
