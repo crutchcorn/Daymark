@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -193,21 +194,34 @@ fun InkEditorSurface(
                             if (handleHit != null) {
                                 down.consume()
 
-                                // Start dragging the handle
-                                textFieldManager.startDraggingHandle(handleHit.textField, handleHit.handleType)
-
-                                // Follow the drag
-                                drag(down.id) { change ->
+                                // Check if this is a tap or a drag by waiting for slop
+                                var didDrag = false
+                                val dragResult = awaitTouchSlopOrCancellation(down.id) { change, _ ->
                                     change.consume()
-                                    textFieldManager.updateHandleDrag(
-                                        handleHit.textField,
-                                        handleHit.handleType,
-                                        change.position
-                                    )
+                                    didDrag = true
                                 }
+                                
+                                if (dragResult != null && didDrag) {
+                                    // User started dragging - start handle drag
+                                    textFieldManager.startDraggingHandle(handleHit.textField, handleHit.handleType)
 
-                                // Drag ended
-                                textFieldManager.stopDraggingHandle(handleHit.textField)
+                                    // Follow the drag
+                                    drag(dragResult.id) { change ->
+                                        change.consume()
+                                        textFieldManager.updateHandleDrag(
+                                            handleHit.textField,
+                                            handleHit.handleType,
+                                            change.position
+                                        )
+                                    }
+
+                                    // Drag ended
+                                    textFieldManager.stopDraggingHandle(handleHit.textField)
+                                } else {
+                                    // User tapped on the handle (released without dragging past slop)
+                                    // Show context menu for cursor handle tap
+                                    textFieldManager.showContextMenuForTextField(handleHit.textField)
+                                }
                                 return@awaitEachGesture
                             }
 

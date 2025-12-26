@@ -145,6 +145,9 @@ class InkCanvasTextFieldManager {
             if (tappedTextField.text.isNotEmpty()) {
                 tappedTextField.handleState = HandleState.Cursor
             }
+            
+            // Hide context menu when entering cursor/navigation mode
+            tappedTextField.showContextMenu = false
             return true
         } else {
             clearFocus()
@@ -173,6 +176,9 @@ class InkCanvasTextFieldManager {
                     androidx.compose.ui.text.TextRange(wordBoundary.start, wordBoundary.end)
                 )
                 tappedTextField.handleState = HandleState.Selection
+                
+                // Show context menu above the selection
+                showContextMenuForTextField(tappedTextField)
             }
             return true
         }
