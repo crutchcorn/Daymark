@@ -1,5 +1,3 @@
-package app.drawmark.android.lib.textcanvas
-
 /*
  * Copyright 2021 The Android Open Source Project
  *
@@ -16,8 +14,8 @@ package app.drawmark.android.lib.textcanvas
  * limitations under the License.
  */
 
-import androidx.compose.foundation.text.KeyboardActionScope
-import androidx.compose.foundation.text.KeyboardActions
+package app.drawmark.android.lib.textcanvas
+
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.SoftwareKeyboardController

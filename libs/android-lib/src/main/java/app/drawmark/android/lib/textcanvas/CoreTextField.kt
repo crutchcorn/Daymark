@@ -1,7 +1,3 @@
-@file:Suppress("DEPRECATION")
-
-package app.drawmark.android.lib.textcanvas
-
 /*
  * Copyright 2020 The Android Open Source Project
  *
@@ -17,6 +13,11 @@ package app.drawmark.android.lib.textcanvas
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+@file:Suppress("DEPRECATION")
+
+package app.drawmark.android.lib.textcanvas
+
 import androidx.compose.foundation.ComposeFoundationFlags
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
@@ -27,23 +28,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.text.handwriting.stylusHandwriting
-import androidx.compose.foundation.text.input.internal.CoreTextFieldSemanticsModifier
-import androidx.compose.foundation.text.input.internal.createLegacyPlatformTextInputServiceAdapter
-import androidx.compose.foundation.text.input.internal.legacyTextInputAdapter
-import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-import androidx.compose.foundation.text.selection.OffsetProvider
-import androidx.compose.foundation.text.selection.SelectedTextType
-import androidx.compose.foundation.text.selection.SelectionHandleAnchor
-import androidx.compose.foundation.text.selection.SelectionHandleInfo
-import androidx.compose.foundation.text.selection.SelectionHandleInfoKey
-import androidx.compose.foundation.text.selection.SimpleLayout
-import androidx.compose.foundation.text.selection.TextFieldSelectionHandle
-import androidx.compose.foundation.text.selection.TextFieldSelectionManager
-import androidx.compose.foundation.text.selection.addBasicTextFieldTextContextMenuComponents
-import androidx.compose.foundation.text.selection.isSelectionHandleInVisibleBound
-import androidx.compose.foundation.text.selection.rememberPlatformSelectionBehaviors
-import androidx.compose.foundation.text.selection.textFieldMagnifier
+import app.drawmark.android.lib.textcanvas.handwriting.stylusHandwriting
+import app.drawmark.android.lib.textcanvas.input.internal.CoreTextFieldSemanticsModifier
+import app.drawmark.android.lib.textcanvas.input.internal.createLegacyPlatformTextInputServiceAdapter
+import app.drawmark.android.lib.textcanvas.input.internal.legacyTextInputAdapter
+import app.drawmark.android.lib.textcanvas.selection.LocalTextSelectionColors
+import app.drawmark.android.lib.textcanvas.selection.OffsetProvider
+import app.drawmark.android.lib.textcanvas.selection.SelectedTextType
+import app.drawmark.android.lib.textcanvas.selection.SelectionHandleAnchor
+import app.drawmark.android.lib.textcanvas.selection.SelectionHandleInfo
+import app.drawmark.android.lib.textcanvas.selection.SelectionHandleInfoKey
+import app.drawmark.android.lib.textcanvas.selection.SimpleLayout
+import app.drawmark.android.lib.textcanvas.selection.TextFieldSelectionHandle
+import app.drawmark.android.lib.textcanvas.selection.TextFieldSelectionManager
+import app.drawmark.android.lib.textcanvas.selection.addBasicTextFieldTextContextMenuComponents
+import app.drawmark.android.lib.textcanvas.selection.isSelectionHandleInVisibleBound
+import app.drawmark.android.lib.textcanvas.selection.rememberPlatformSelectionBehaviors
+import app.drawmark.android.lib.textcanvas.selection.textFieldMagnifier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.DontMemoize
@@ -231,9 +232,9 @@ internal fun CoreTextField(
     if (scrollerPosition.orientation != orientation) {
         throw IllegalArgumentException(
             "Mismatching scroller orientation; " +
-                    (if (orientation == Orientation.Vertical)
-                        "only single-line, non-wrap text fields can scroll horizontally"
-                    else "single-line, non-wrap text fields can only scroll horizontally")
+                (if (orientation == Orientation.Vertical)
+                    "only single-line, non-wrap text fields can scroll horizontally"
+                else "single-line, non-wrap text fields can only scroll horizontally")
         )
     }
 
@@ -496,7 +497,7 @@ internal fun CoreTextField(
 
     val handwritingEnabled =
         imeOptions.keyboardType != KeyboardType.Password &&
-                imeOptions.keyboardType != KeyboardType.NumberPassword
+            imeOptions.keyboardType != KeyboardType.NumberPassword
     val stylusHandwritingModifier =
         Modifier.stylusHandwriting(writeable, handwritingEnabled) {
             // If this is a password field, we can't trigger handwriting.
@@ -653,9 +654,9 @@ internal fun CoreTextField(
                     manager = manager,
                     show =
                         state.handleState != HandleState.None &&
-                                state.layoutCoordinates != null &&
-                                state.layoutCoordinates!!.isAttached &&
-                                showHandleAndMagnifier,
+                            state.layoutCoordinates != null &&
+                            state.layoutCoordinates!!.isAttached &&
+                            showHandleAndMagnifier,
                 )
 
                 if (
@@ -1081,17 +1082,17 @@ internal fun TextFieldCursorHandle(manager: TextFieldSelectionManager) {
             offsetProvider = { position },
             modifier =
                 Modifier.pointerInput(observer) {
-                    coroutineScope {
-                        // UNDISPATCHED because this runs upon first pointer event and
-                        // without it the event would pass before the handler is ready
-                        launch(start = CoroutineStart.UNDISPATCHED) {
-                            detectDownAndDragGesturesWithObserver(observer)
-                        }
-                        launch(start = CoroutineStart.UNDISPATCHED) {
-                            detectTapGestures { manager.showSelectionToolbar() }
+                        coroutineScope {
+                            // UNDISPATCHED because this runs upon first pointer event and
+                            // without it the event would pass before the handler is ready
+                            launch(start = CoroutineStart.UNDISPATCHED) {
+                                detectDownAndDragGesturesWithObserver(observer)
+                            }
+                            launch(start = CoroutineStart.UNDISPATCHED) {
+                                detectTapGestures { manager.showSelectionToolbar() }
+                            }
                         }
                     }
-                }
                     .semantics {
                         this[SelectionHandleInfoKey] =
                             SelectionHandleInfo(

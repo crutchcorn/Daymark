@@ -1,5 +1,3 @@
-package app.drawmark.android.lib.textcanvas
-
 /*
  * Copyright 2019 The Android Open Source Project
  *
@@ -16,6 +14,10 @@ package app.drawmark.android.lib.textcanvas
  * limitations under the License.
  */
 
+package app.drawmark.android.lib.textcanvas
+
+import androidx.compose.foundation.internal.requirePrecondition
+import app.drawmark.android.lib.textcanvas.TextDelegate.Companion.paint
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.text.AnnotatedString
@@ -110,13 +112,19 @@ internal class TextDelegate(
     val maxIntrinsicWidth: Int
         get() = nonNullIntrinsics.maxIntrinsicWidth.ceilToIntPx()
 
+    init {
+        requirePrecondition(maxLines > 0) { "no maxLines" }
+        requirePrecondition(minLines > 0) { "no minLines" }
+        requirePrecondition(minLines <= maxLines) { "minLines greater than maxLines" }
+    }
+
     fun layoutIntrinsics(layoutDirection: LayoutDirection) {
         val localIntrinsics = paragraphIntrinsics
         val intrinsics =
             if (
                 localIntrinsics == null ||
-                layoutDirection != intrinsicsLayoutDirection ||
-                localIntrinsics.hasStaleResolvedFonts
+                    layoutDirection != intrinsicsLayoutDirection ||
+                    localIntrinsics.hasStaleResolvedFonts
             ) {
                 intrinsicsLayoutDirection = layoutDirection
                 MultiParagraphIntrinsics(
@@ -209,18 +217,18 @@ internal class TextDelegate(
     ): TextLayoutResult {
         if (
             prevResult != null &&
-            prevResult.canReuse(
-                text,
-                style,
-                placeholders,
-                maxLines,
-                softWrap,
-                overflow,
-                density,
-                layoutDirection,
-                fontFamilyResolver,
-                constraints,
-            )
+                prevResult.canReuse(
+                    text,
+                    style,
+                    placeholders,
+                    maxLines,
+                    softWrap,
+                    overflow,
+                    density,
+                    layoutDirection,
+                    fontFamilyResolver,
+                    constraints,
+                )
         ) {
             // NOTE(text-perf-review): seems like there's a nontrivial chance for us to be able
             // to just return prevResult here directly?
@@ -321,14 +329,14 @@ internal fun updateTextDelegate(
     // lot slower than the equivalent `remember(a, b, c, ...) { ... }` call.
     return if (
         current.text != text ||
-        current.style != style ||
-        current.softWrap != softWrap ||
-        current.overflow != overflow ||
-        current.maxLines != maxLines ||
-        current.minLines != minLines ||
-        current.density != density ||
-        current.placeholders != placeholders ||
-        current.fontFamilyResolver !== fontFamilyResolver
+            current.style != style ||
+            current.softWrap != softWrap ||
+            current.overflow != overflow ||
+            current.maxLines != maxLines ||
+            current.minLines != minLines ||
+            current.density != density ||
+            current.placeholders != placeholders ||
+            current.fontFamilyResolver !== fontFamilyResolver
     ) {
         TextDelegate(
             text = text,

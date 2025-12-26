@@ -1,5 +1,3 @@
-package app.drawmark.android.lib.textcanvas
-
 /*
  * Copyright 2019 The Android Open Source Project
  *
@@ -15,6 +13,8 @@ package app.drawmark.android.lib.textcanvas
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package app.drawmark.android.lib.textcanvas
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.text.AnnotatedString
@@ -65,14 +65,14 @@ internal fun TextLayoutResult.canReuse(
     }
     if (
         !(layoutInput.text == text &&
-                layoutInput.style.hasSameLayoutAffectingAttributes(style) &&
-                layoutInput.placeholders == placeholders &&
-                layoutInput.maxLines == maxLines &&
-                layoutInput.softWrap == softWrap &&
-                layoutInput.overflow == overflow &&
-                layoutInput.density == density &&
-                layoutInput.layoutDirection == layoutDirection &&
-                layoutInput.fontFamilyResolver == fontFamilyResolver)
+            layoutInput.style.hasSameLayoutAffectingAttributes(style) &&
+            layoutInput.placeholders == placeholders &&
+            layoutInput.maxLines == maxLines &&
+            layoutInput.softWrap == softWrap &&
+            layoutInput.overflow == overflow &&
+            layoutInput.density == density &&
+            layoutInput.layoutDirection == layoutDirection &&
+            layoutInput.fontFamilyResolver == fontFamilyResolver)
     ) {
         return false
     }
@@ -85,7 +85,7 @@ internal fun TextLayoutResult.canReuse(
         return true
     }
     return constraints.maxWidth == layoutInput.constraints.maxWidth &&
-            constraints.maxHeight == layoutInput.constraints.maxHeight
+        constraints.maxHeight == layoutInput.constraints.maxHeight
 }
 
 /** Returns whether the given pixel position is inside the selection. */
@@ -104,7 +104,7 @@ internal fun TextLayoutResult.isPositionInsideSelection(
     // and the previous index.
     val offset = getOffsetForPosition(position)
     return isOffsetSelectedAndContainsPosition(offset) ||
-            isOffsetSelectedAndContainsPosition(offset - 1)
+        isOffsetSelectedAndContainsPosition(offset - 1)
 }
 
 /**
