@@ -219,48 +219,32 @@ class CanvasTextFieldState(
 
     /**
      * Update the selection start position during handle dragging.
-     * The start can move past the end, which will swap the selection direction.
+     * Enforces minimum 1 character selection - start handle cannot cross past end handle.
      */
     fun updateSelectionStart(offset: Int) {
         val clampedOffset = offset.coerceIn(0, value.text.length)
         val currentEnd = value.selection.max
         
-        // If dragging start past end, swap roles
-        if (clampedOffset > currentEnd) {
-            value = value.copy(selection = TextRange(currentEnd, clampedOffset))
-            // Swap to dragging end handle
-            draggingHandle = DraggingHandle.End
-        } else if (clampedOffset == currentEnd) {
-            // Collapsed to cursor
-            value = value.copy(selection = TextRange(clampedOffset))
-            handleState = HandleState.Cursor
-            draggingHandle = DraggingHandle.Cursor
-        } else {
-            value = value.copy(selection = TextRange(clampedOffset, currentEnd))
-        }
+        // Enforce minimum 1 character selection - start cannot go past (end - 1)
+        val maxStart = (currentEnd - 1).coerceAtLeast(0)
+        val newStart = clampedOffset.coerceAtMost(maxStart)
+        
+        value = value.copy(selection = TextRange(newStart, currentEnd))
     }
 
     /**
      * Update the selection end position during handle dragging.
-     * The end can move past the start, which will swap the selection direction.
+     * Enforces minimum 1 character selection - end handle cannot cross past start handle.
      */
     fun updateSelectionEnd(offset: Int) {
         val clampedOffset = offset.coerceIn(0, value.text.length)
         val currentStart = value.selection.min
         
-        // If dragging end past start, swap roles
-        if (clampedOffset < currentStart) {
-            value = value.copy(selection = TextRange(clampedOffset, currentStart))
-            // Swap to dragging start handle
-            draggingHandle = DraggingHandle.Start
-        } else if (clampedOffset == currentStart) {
-            // Collapsed to cursor
-            value = value.copy(selection = TextRange(clampedOffset))
-            handleState = HandleState.Cursor
-            draggingHandle = DraggingHandle.Cursor
-        } else {
-            value = value.copy(selection = TextRange(currentStart, clampedOffset))
-        }
+        // Enforce minimum 1 character selection - end cannot go before (start + 1)
+        val minEnd = (currentStart + 1).coerceAtMost(value.text.length)
+        val newEnd = clampedOffset.coerceAtLeast(minEnd)
+        
+        value = value.copy(selection = TextRange(currentStart, newEnd))
     }
 
     /**
