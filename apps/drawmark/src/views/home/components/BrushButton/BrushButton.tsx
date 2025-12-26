@@ -20,9 +20,9 @@ function BrushColorButton({ currentColor, setColor }: BrushColorButtonProps) {
   const ColorValuesRows = splitInto(ColorValues, 4);
 
   return (
-    <View className="flex flex-col space-y-4 rounded-lg bg-white p-12 shadow-lg">
+    <View className="flex flex-col gap-2 rounded-xl bg-white p-4 shadow-lg">
       {ColorValuesRows.map((row, i) => (
-        <View key={i} className="flex flex-row space-x-4">
+        <View key={i} className="flex flex-row gap-2">
           {row.map(color => {
             const isColorDark = new Color(color).isDark();
             return (
@@ -69,6 +69,8 @@ export function BrushButton({
   Icon,
 }: BrushButtonProps) {
   const ref = useRef<PopoverPrimitive.TriggerRef>(null);
+  const isSelected = family === currentFamily;
+
   return (
     <PopoverPrimitive.Root>
       <PopoverPrimitive.Trigger ref={ref}>
@@ -82,9 +84,13 @@ export function BrushButton({
           }}
           className={`columns relative flex`}
         >
-          <Icon activeColor={color} className={`mb-12 h-12 w-12`} />
-          {currentFamily === family ? (
-            <Text className="absolute bottom-0 left-1/2 -translate-x-1/2 transform text-6xl">
+          <Icon
+            activeColor={color}
+            // Lift the icon by 10px when selected
+            className={`mt-4 mb-4 h-12 w-12 ${isSelected ? '-translate-y-1' : ''}`}
+          />
+          {isSelected ? (
+            <Text className="absolute -bottom-4 left-1/2 -translate-x-1/2 transform text-6xl">
               ⋅
             </Text>
           ) : null}
@@ -93,7 +99,11 @@ export function BrushButton({
       <PopoverPrimitive.Portal>
         <PopoverPrimitive.Overlay style={StyleSheet.absoluteFill}>
           <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut}>
-            <PopoverPrimitive.Content align={'center'} sideOffset={4}>
+            <PopoverPrimitive.Content
+              side={'top'}
+              align={'center'}
+              sideOffset={4}
+            >
               <BrushColorButton currentColor={color} setColor={setColor} />
             </PopoverPrimitive.Content>
           </Animated.View>
