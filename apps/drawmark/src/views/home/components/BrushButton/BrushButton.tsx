@@ -23,8 +23,8 @@ function BrushColorButton({
       <VariableContextProvider key={Color} value={{
         "--background": Color
       }}>
-      <Pressable onPress={() => setColor(Color)} className={`relative w-12 h-12 rounded-full bg-(--background)`}>
-        {color === Color ? <View className={"absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white"}/> : null}
+      <Pressable onPress={() => setColor(Color)} className={`relative w-12 h-12 rounded-full bg-(--background) flex items-center justify-center`}>
+        {color === Color ? <View className={"w-4 h-4 rounded-full bg-white"}/> : null}
       </Pressable>
       </VariableContextProvider>
     )}
