@@ -63,14 +63,6 @@ export function HomeUI({
         <BrushButton Icon={MarkerIcon} family="marker" currentFamily={brushInfo.family} setFamily={setFamily} color={brushInfo.color} setColor={setColor} />
         <BrushButton Icon={HighlighterIcon} family="highlighter" currentFamily={brushInfo.family} setFamily={setFamily} color={brushInfo.color} setColor={setColor} />
       </View>
-      <View>
-        <Pressable
-          onPress={() => setBrushInfo({ ...brushInfo, color: '#FF0000' })}
-        ><Text>Red</Text></Pressable>
-        <Pressable
-          onPress={() => setBrushInfo({ ...brushInfo, color: '#0000FF' })}
-        ><Text>Blue</Text></Pressable>
-      </View>
       <Pressable
         onPress={handleEditToggle}
       ><Text>{isEditing ? 'Stop Editing' : 'Edit'}</Text></Pressable>

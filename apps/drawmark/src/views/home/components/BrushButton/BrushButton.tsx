@@ -6,27 +6,30 @@ import { InkEditorBrushFamily } from '../../../../components/InkEditor';
 import { useRef } from 'react';
 import { Colors } from '../../constants/colors';
 import { VariableContextProvider } from "nativewind";
+import Color from "color";
 
 const ColorValues = Object.values(Colors);
 
 interface BrushColorButtonProps {
-  color: string;
+  currentColor: string;
   setColor: (color: string) => void;
 }
 
 function BrushColorButton({
-  color,
+  currentColor,
   setColor
 }: BrushColorButtonProps) {
   return <View className="bg-white p-12">
-    {ColorValues.map((Color) =>
-      <VariableContextProvider key={Color} value={{
-        "--background": Color
-      }}>
-      <Pressable onPress={() => setColor(Color)} className={`relative w-12 h-12 rounded-full bg-(--background) flex items-center justify-center`}>
-        {color === Color ? <View className={"w-4 h-4 rounded-full bg-white"}/> : null}
-      </Pressable>
-      </VariableContextProvider>
+    {ColorValues.map((color) => {
+        const isColorDark = new Color(color).isDark();
+        return <VariableContextProvider key={color} value={{
+          "--background": color
+        }}>
+        <Pressable onPress={() => setColor(color)} className={`relative w-12 h-12 rounded-full bg-(--background) flex items-center justify-center`}>
+          {currentColor === color ? <View className={`w-4 h-4 rounded-full ${isColorDark ? "bg-white" : "bg-black"}`}/> : null}
+        </Pressable>
+        </VariableContextProvider>;
+      }
     )}
   </View>
 }
@@ -65,7 +68,7 @@ export function BrushButton({family, currentFamily, setFamily, color, setColor, 
               align={'center'}
               sideOffset={4}
             >
-              <BrushColorButton color={color} setColor={setColor}/>
+              <BrushColorButton currentColor={color} setColor={setColor}/>
             </PopoverPrimitive.Content>
           </Animated.View>
         </PopoverPrimitive.Overlay>
