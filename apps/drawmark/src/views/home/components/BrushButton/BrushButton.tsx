@@ -5,7 +5,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { InkEditorBrushFamily } from '../../../../components/InkEditor';
 import { useRef } from 'react';
 import { Colors } from '../../constants/colors';
-import { vars } from "nativewind";
+import { VariableContextProvider } from "nativewind";
 
 const ColorValues = Object.values(Colors);
 
@@ -14,23 +14,23 @@ interface BrushColorButtonProps {
   setColor: (color: string) => void;
 }
 
-const brushesTheme = vars(Object.entries(Colors).reduce((prev, curr) => ({
+const brushesTheme = Object.entries(Colors).reduce((prev, curr) => ({
   ...prev,
-  [`--color-${curr[0]}`]: curr[1]
-}), {} as Record<string, string>));
+  [`--background-${curr[0]}`]: curr[1]
+}), {} as Record<string, string>);
 
 function BrushColorButton({
   color,
   setColor
 }: BrushColorButtonProps) {
   return <View className="bg-white p-12">
-    <View style={brushesTheme}>
+    <VariableContextProvider value={brushesTheme}>
     {ColorValues.map((Color) =>
-      <Pressable key={Color} onPress={() => setColor(Color)} className={`relative w-12 h-12 rounded-full bg-[var(--color-${Color})]`}>
+      <Pressable key={Color} onPress={() => setColor(Color)} className={`relative w-12 h-12 rounded-full bg-[var(--background-${Color})]`}>
         {color === Color ? <View className={"absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white"}/> : null}
       </Pressable>)
     }
-  </View>
+  </VariableContextProvider>
   </View>
 }
 
