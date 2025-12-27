@@ -16,3 +16,13 @@ export const inkCanvasStateTable = sqliteTable('ink_canvas_state', {
   /** Timestamp of last update */
   updatedAt: int('updated_at', { mode: 'timestamp' }).notNull(),
 });
+
+export const toolbarStateTable = sqliteTable('toolbar_state', {
+  id: int().primaryKey({ autoIncrement: true }),
+  /** Unique identifier for the canvas this toolbar state belongs to */
+  canvasId: text('canvas_id').notNull().unique(),
+  /** Serialized toolbar state JSON containing per-brush family settings */
+  stateJson: text('state_json').notNull().default('{}'),
+  /** Timestamp of last update */
+  updatedAt: int('updated_at', { mode: 'timestamp' }).notNull(),
+});

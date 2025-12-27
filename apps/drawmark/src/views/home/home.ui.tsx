@@ -13,6 +13,7 @@ import { MarkerIcon } from '../../components/Icons/marker';
 import { HighlighterIcon } from '../../components/Icons/highlighter';
 import { BrushButton } from './components/BrushButton/BrushButton';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import type { ToolbarState, BrushSettings } from '../../constants/toolbar';
 
 interface HomeUIProps {
   canvasRef: RefObject<InkEditorRef | null>;
@@ -20,10 +21,11 @@ interface HomeUIProps {
   textFields: string | undefined;
   handleStrokesChange: (strokesJson: string) => void;
   handleTextFieldsChange: (textFieldsJson: string) => void;
-  brushInfo: InkEditorBrushInfo;
-  setBrushInfo: (info: InkEditorBrushInfo) => void;
-  editingMode: InkEditorMode;
+  toolbarState: ToolbarState;
+  activeBrushInfo: InkEditorBrushInfo;
+  setActiveFamily: (family: InkEditorBrushFamily) => void;
   setEditingMode: (mode: InkEditorMode) => void;
+  setBrushSettings: (family: InkEditorBrushFamily, settings: Partial<BrushSettings>) => void;
 }
 
 export function HomeUI({
@@ -32,10 +34,11 @@ export function HomeUI({
   textFields,
   handleStrokesChange,
   handleTextFieldsChange,
-  brushInfo,
-  setBrushInfo,
-  editingMode,
+  toolbarState,
+  activeBrushInfo,
+  setActiveFamily,
   setEditingMode,
+  setBrushSettings,
 }: HomeUIProps) {
   const handleClear = () => {
     canvasRef.current?.clear();
@@ -49,32 +52,30 @@ export function HomeUI({
     setEditingMode(null);
   };
 
-  const setFamily = (family: InkEditorBrushFamily) => {
-    setBrushInfo({ ...brushInfo, family });
+  const handleSetFamily = (family: InkEditorBrushFamily) => {
+    setActiveFamily(family);
     setEditingMode('draw');
   };
 
-  const setColor = (color: string) => setBrushInfo({ ...brushInfo, color });
-
   return (
     <View className="safe relative flex-1">
-      {editingMode ? (
+      {toolbarState.editingMode ? (
         <InkEditor
           strokes={strokes}
           textFields={textFields}
           onStrokesChange={handleStrokesChange}
           onTextFieldsChange={handleTextFieldsChange}
           ref={canvasRef}
-          brushColor={brushInfo.color}
-          brushSize={brushInfo.size}
-          brushFamily={brushInfo.family}
-          mode={editingMode}
+          brushColor={activeBrushInfo.color}
+          brushSize={activeBrushInfo.size}
+          brushFamily={activeBrushInfo.family}
+          mode={toolbarState.editingMode}
           style={{ flex: 1 }}
         />
       ) : (
         <InkCanvas strokes={strokes} textFields={textFields} style={{ flex: 1 }} />
       )}
-      {editingMode ? (
+      {toolbarState.editingMode ? (
         <View className="absolute bottom-12 w-full pr-10 pl-10">
           <View
             className={`flex flex-row items-center space-x-4 rounded-full border-2 border-gray-300 bg-white pr-4 pl-4 shadow-lg`}
@@ -82,39 +83,39 @@ export function HomeUI({
             <BrushButton
               Icon={PenIcon}
               family="pen"
-              currentFamily={brushInfo.family}
-              setFamily={setFamily}
-              color={brushInfo.color}
-              setColor={setColor}
-              editingMode={editingMode}
+              currentFamily={toolbarState.activeFamily}
+              setFamily={handleSetFamily}
+              color={toolbarState.brushes.pen.color}
+              setColor={(color) => setBrushSettings('pen', { color })}
+              editingMode={toolbarState.editingMode}
             />
             <BrushButton
               Icon={MarkerIcon}
               family="marker"
-              currentFamily={brushInfo.family}
-              setFamily={setFamily}
-              color={brushInfo.color}
-              setColor={setColor}
-              editingMode={editingMode}
+              currentFamily={toolbarState.activeFamily}
+              setFamily={handleSetFamily}
+              color={toolbarState.brushes.marker.color}
+              setColor={(color) => setBrushSettings('marker', { color })}
+              editingMode={toolbarState.editingMode}
             />
             <BrushButton
               Icon={HighlighterIcon}
               family="highlighter"
-              currentFamily={brushInfo.family}
-              setFamily={setFamily}
-              color={brushInfo.color}
-              setColor={setColor}
-              editingMode={editingMode}
+              currentFamily={toolbarState.activeFamily}
+              setFamily={handleSetFamily}
+              color={toolbarState.brushes.highlighter.color}
+              setColor={(color) => setBrushSettings('highlighter', { color })}
+              editingMode={toolbarState.editingMode}
             />
             <Pressable
               onPress={() => setEditingMode('text')}
               className={`rounded-full p-2 ${
-                editingMode === 'text' ? 'bg-gray-200' : ''
+                toolbarState.editingMode === 'text' ? 'bg-gray-200' : ''
               }`}
             >
               <Text
                 className={`text-xl font-bold ${
-                  editingMode === 'text' ? 'text-black' : 'text-gray-500'
+                  toolbarState.editingMode === 'text' ? 'text-black' : 'text-gray-500'
                 }`}
               >
                 T

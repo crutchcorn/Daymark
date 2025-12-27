@@ -1,23 +1,22 @@
 import { ActivityIndicator } from 'react-native';
 import { HomeUI } from './home.ui';
 import { useInkCanvasPersistence } from '../../hooks/useInkCanvasPersistence';
-import { useState } from 'react';
-import { InkEditorBrushInfo, InkEditorMode } from '../../components/InkEditor';
-import { Colors } from './constants/colors';
+import { useToolbarStatePersistence } from '../../hooks/useToolbarStatePersistence';
 
 export function HomeView() {
-  const { canvasRef, strokes, textFields, isLoading, handleStrokesChange, handleTextFieldsChange } =
+  const { canvasRef, strokes, textFields, isLoading: isCanvasLoading, handleStrokesChange, handleTextFieldsChange } =
     useInkCanvasPersistence('main-canvas');
 
-  const [brushInfo, setBrushInfo] = useState({
-    color: Colors.blue,
-    size: 8,
-    family: 'pen',
-  } as InkEditorBrushInfo);
+  const {
+    toolbarState,
+    activeBrushInfo,
+    isLoading: isToolbarLoading,
+    setActiveFamily,
+    setEditingMode,
+    setBrushSettings,
+  } = useToolbarStatePersistence('main-canvas');
 
-  const [editingMode, setEditingMode] = useState<InkEditorMode>('draw');
-
-  if (isLoading) {
+  if (isCanvasLoading || isToolbarLoading || !activeBrushInfo) {
     return <ActivityIndicator />;
   }
 
@@ -28,10 +27,11 @@ export function HomeView() {
       textFields={textFields}
       handleStrokesChange={handleStrokesChange}
       handleTextFieldsChange={handleTextFieldsChange}
-      brushInfo={brushInfo}
-      setBrushInfo={setBrushInfo}
-      editingMode={editingMode}
+      toolbarState={toolbarState}
+      activeBrushInfo={activeBrushInfo}
+      setActiveFamily={setActiveFamily}
       setEditingMode={setEditingMode}
+      setBrushSettings={setBrushSettings}
     />
   );
 }
