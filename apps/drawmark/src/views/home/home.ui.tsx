@@ -72,7 +72,7 @@ export function HomeUI({
           style={{ flex: 1 }}
         />
       ) : (
-        <InkCanvas initialStrokes={initialStrokes} style={{ flex: 1 }} />
+        <InkCanvas initialStrokes={initialStrokes} initialTextFields={initialTextFields} style={{ flex: 1 }} />
       )}
       {editingMode ? (
         <View className="absolute bottom-12 w-full pr-10 pl-10">

@@ -22,6 +22,7 @@ interface InkCanvasNativeProps {
 
 export interface InkCanvasRef {
   loadStrokes: (strokesJson: string) => void;
+  loadTextFields: (textFieldsJson: string) => void;
 }
 
 export interface InkCanvasProps {

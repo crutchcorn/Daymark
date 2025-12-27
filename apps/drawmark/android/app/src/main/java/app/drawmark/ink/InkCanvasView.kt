@@ -2,21 +2,27 @@ package app.drawmark.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.Stroke
-import app.drawmark.android.lib.ink.InkDisplaySurface
+import app.drawmark.android.lib.ink.InkDisplaySurfaceWithText
 import app.drawmark.android.lib.ink.StrokeSerializer
+import app.drawmark.android.lib.textcanvas.InkCanvasTextFieldManager
+import app.drawmark.android.lib.textcanvas.TextFieldSerializer
 
+private const val TAG = "InkCanvasView"
 
 @SuppressLint("ViewConstructor")
 class InkCanvasView(context: Context) : FrameLayout(context) {
     private val finishedStrokesState = mutableStateOf(emptySet<Stroke>())
     private val canvasStrokeRenderer = CanvasStrokeRenderer.create()
     private val strokeSerializer = StrokeSerializer()
+    private val textFieldSerializer = TextFieldSerializer()
+    private val textFieldManager = InkCanvasTextFieldManager()
     private val composeView: ComposeView
     private var wasDetached = false
 
@@ -30,9 +36,11 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
 
     private fun setComposeContent() {
         composeView.setContent {
-            InkDisplaySurface(
+            InkDisplaySurfaceWithText(
                 finishedStrokesState = finishedStrokesState.value,
-                canvasStrokeRenderer = canvasStrokeRenderer
+                canvasStrokeRenderer = canvasStrokeRenderer,
+                textFieldManager = textFieldManager,
+                isTextMode = false  // Read-only display, text fields not editable
             )
         }
     }
@@ -77,5 +85,24 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
      */
     fun getSerializedStrokes(): String {
         return strokeSerializer.serializeStrokes(finishedStrokesState.value)
+    }
+
+    /**
+     * Loads text fields from a serialized JSON string.
+     */
+    fun loadTextFields(json: String) {
+        Log.d(TAG, "loadTextFields called with: $json")
+        if (json.isEmpty()) {
+            Log.d(TAG, "loadTextFields: json is empty, returning")
+            return
+        }
+        val textFields = textFieldSerializer.deserializeTextFields(json)
+        Log.d(TAG, "loadTextFields: deserialized ${textFields.size} text fields")
+        textFieldManager.clearTextFields()
+        textFields.forEach { textField ->
+            Log.d(TAG, "loadTextFields: adding text field with text='${textField.text}' at ${textField.position}")
+            textFieldManager.addTextField(textField.position, textField.text)
+        }
+        Log.d(TAG, "loadTextFields: textFieldManager now has ${textFieldManager.textFields.size} text fields")
     }
 }

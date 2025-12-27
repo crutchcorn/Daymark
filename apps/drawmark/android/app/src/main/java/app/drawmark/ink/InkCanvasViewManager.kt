@@ -15,6 +15,7 @@ class InkCanvasViewManager(
     companion object {
         const val REACT_CLASS = "InkCanvasView"
         const val COMMAND_LOAD_STROKES = 1
+        const val COMMAND_LOAD_TEXT_FIELDS = 2
     }
 
     override fun getName(): String = REACT_CLASS
@@ -24,7 +25,8 @@ class InkCanvasViewManager(
     }
     override fun getCommandsMap(): Map<String, Int> {
         return mapOf(
-            "loadStrokes" to COMMAND_LOAD_STROKES
+            "loadStrokes" to COMMAND_LOAD_STROKES,
+            "loadTextFields" to COMMAND_LOAD_TEXT_FIELDS
         )
     }
 
@@ -33,6 +35,10 @@ class InkCanvasViewManager(
             "loadStrokes" -> {
                 val strokesJson = args?.getString(0) ?: ""
                 view.loadStrokes(strokesJson)
+            }
+            "loadTextFields" -> {
+                val textFieldsJson = args?.getString(0) ?: ""
+                view.loadTextFields(textFieldsJson)
             }
         }
     }
@@ -43,6 +49,10 @@ class InkCanvasViewManager(
             COMMAND_LOAD_STROKES -> {
                 val strokesJson = args?.getString(0) ?: ""
                 view.loadStrokes(strokesJson)
+            }
+            COMMAND_LOAD_TEXT_FIELDS -> {
+                val textFieldsJson = args?.getString(0) ?: ""
+                view.loadTextFields(textFieldsJson)
             }
         }
     }
