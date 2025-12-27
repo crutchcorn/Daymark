@@ -83,13 +83,13 @@ class InkEditorViewManager(
         }
     }
 
-    @ReactProp(name = "initialStrokes")
-    fun setInitialStrokes(view: InkEditorView, strokesJson: String?) {
+    @ReactProp(name = "strokes")
+    fun setStrokes(view: InkEditorView, strokesJson: String?) {
         strokesJson?.let { view.loadStrokes(it) }
     }
 
-    @ReactProp(name = "initialTextFields")
-    fun setInitialTextFields(view: InkEditorView, textFieldsJson: String?) {
+    @ReactProp(name = "textFields")
+    fun setTextFields(view: InkEditorView, textFieldsJson: String?) {
         textFieldsJson?.let { view.loadTextFields(it) }
     }
 

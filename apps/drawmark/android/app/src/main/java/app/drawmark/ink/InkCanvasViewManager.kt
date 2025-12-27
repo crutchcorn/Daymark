@@ -19,13 +19,13 @@ class InkCanvasViewManager(
         return InkCanvasView(context)
     }
 
-    @ReactProp(name = "initialStrokes")
-    fun setInitialStrokes(view: InkCanvasView, strokesJson: String?) {
+    @ReactProp(name = "strokes")
+    fun setStrokes(view: InkCanvasView, strokesJson: String?) {
         strokesJson?.let { view.loadStrokes(it) }
     }
 
-    @ReactProp(name = "initialTextFields")
-    fun setInitialTextFields(view: InkCanvasView, textFieldsJson: String?) {
+    @ReactProp(name = "textFields")
+    fun setTextFields(view: InkCanvasView, textFieldsJson: String?) {
         textFieldsJson?.let { view.loadTextFields(it) }
     }
 }

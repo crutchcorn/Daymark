@@ -16,8 +16,8 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 
 interface HomeUIProps {
   canvasRef: RefObject<InkEditorRef | null>;
-  initialStrokes: string | undefined;
-  initialTextFields: string | undefined;
+  strokes: string | undefined;
+  textFields: string | undefined;
   handleStrokesChange: (strokesJson: string) => void;
   handleTextFieldsChange: (textFieldsJson: string) => void;
   brushInfo: InkEditorBrushInfo;
@@ -28,8 +28,8 @@ interface HomeUIProps {
 
 export function HomeUI({
   canvasRef,
-  initialStrokes,
-  initialTextFields,
+  strokes,
+  textFields,
   handleStrokesChange,
   handleTextFieldsChange,
   brushInfo,
@@ -60,8 +60,8 @@ export function HomeUI({
     <View className="safe relative flex-1">
       {editingMode ? (
         <InkEditor
-          initialStrokes={initialStrokes}
-          initialTextFields={initialTextFields}
+          strokes={strokes}
+          textFields={textFields}
           onStrokesChange={handleStrokesChange}
           onTextFieldsChange={handleTextFieldsChange}
           ref={canvasRef}
@@ -72,7 +72,7 @@ export function HomeUI({
           style={{ flex: 1 }}
         />
       ) : (
-        <InkCanvas initialStrokes={initialStrokes} initialTextFields={initialTextFields} style={{ flex: 1 }} />
+        <InkCanvas strokes={strokes} textFields={textFields} style={{ flex: 1 }} />
       )}
       {editingMode ? (
         <View className="absolute bottom-12 w-full pr-10 pl-10">

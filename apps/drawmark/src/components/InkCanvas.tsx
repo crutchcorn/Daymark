@@ -11,8 +11,8 @@ const COMPONENT_NAME = 'InkCanvasView';
 
 interface InkCanvasNativeProps {
   style?: StyleProp<ViewStyle>;
-  initialStrokes?: string;
-  initialTextFields?: string;
+  strokes?: string;
+  textFields?: string;
 }
 
 export interface InkCanvasRef {
@@ -22,15 +22,15 @@ export interface InkCanvasRef {
 export interface InkCanvasProps {
   style?: StyleProp<ViewStyle>;
   /**
-   * Initial strokes to load when the canvas mounts.
-   * This should be a JSON string from a previous save.
+   * The strokes to display on the canvas.
+   * This should be a JSON string.
    */
-  initialStrokes?: string;
+  strokes?: string;
   /**
-   * Initial text fields to load when the editor mounts.
-   * This should be a JSON string from a previous save.
+   * The text fields to display on the canvas.
+   * This should be a JSON string.
    */
-  initialTextFields?: string;
+  textFields?: string;
 }
 
 const NativeInkCanvas =
@@ -45,7 +45,7 @@ const NativeInkCanvas =
  * Note: This component is only available on Android.
  */
 export const InkCanvas = forwardRef<InkCanvasRef, InkCanvasProps>(
-  ({ style, initialStrokes, initialTextFields }, ref) => {
+  ({ style, strokes, textFields }, ref) => {
     if (Platform.OS !== 'android' || !NativeInkCanvas) {
       // Return null or a placeholder for non-Android platforms
       return null;
@@ -54,8 +54,8 @@ export const InkCanvas = forwardRef<InkCanvasRef, InkCanvasProps>(
     return (
       <NativeInkCanvas
         style={[styles.container, style]}
-        initialStrokes={initialStrokes}
-        initialTextFields={initialTextFields}
+        strokes={strokes}
+        textFields={textFields}
       />
     );
   },

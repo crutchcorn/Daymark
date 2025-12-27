@@ -89,8 +89,8 @@ export function useInkCanvasPersistence(canvasId: string) {
 
   return {
     canvasRef,
-    initialStrokes: data?.strokesJson,
-    initialTextFields: data?.textFieldsJson,
+    strokes: data?.strokesJson,
+    textFields: data?.textFieldsJson,
     isLoading,
     error,
     handleStrokesChange,

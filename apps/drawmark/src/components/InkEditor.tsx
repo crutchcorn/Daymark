@@ -26,8 +26,8 @@ interface InkEditorNativeProps {
   brushSize?: number;
   brushFamily?: 'pen' | 'marker' | 'highlighter';
   mode?: 'draw' | 'text';
-  initialStrokes?: string;
-  initialTextFields?: string;
+  strokes?: string;
+  textFields?: string;
   onStrokesChange?: (event: NativeSyntheticEvent<StrokesChangeEvent>) => void;
   onTextFieldsChange?: (
     event: NativeSyntheticEvent<TextFieldsChangeEvent>,
@@ -76,15 +76,15 @@ export interface InkEditorProps {
    */
   mode?: InkEditorMode;
   /**
-   * Initial strokes to load when the editor mounts.
-   * This should be a JSON string from a previous save.
+   * The strokes to display/edit.
+   * This should be a JSON string.
    */
-  initialStrokes?: string;
+  strokes?: string;
   /**
-   * Initial text fields to load when the editor mounts.
-   * This should be a JSON string from a previous save.
+   * The text fields to display/edit.
+   * This should be a JSON string.
    */
-  initialTextFields?: string;
+  textFields?: string;
   /**
    * Callback fired when strokes change (after a stroke is finished or cleared).
    * The callback receives a serialized JSON string of all strokes.
@@ -117,8 +117,8 @@ export const InkEditor = forwardRef<InkEditorRef, InkEditorProps>(
       brushSize = 5,
       brushFamily = 'pen',
       mode = 'draw',
-      initialStrokes,
-      initialTextFields,
+      strokes,
+      textFields,
       onStrokesChange,
       onTextFieldsChange,
     },
@@ -171,8 +171,8 @@ export const InkEditor = forwardRef<InkEditorRef, InkEditorProps>(
         brushSize={brushSize}
         brushFamily={brushFamily}
         mode={mode ?? undefined}
-        initialStrokes={initialStrokes}
-        initialTextFields={initialTextFields}
+        strokes={strokes}
+        textFields={textFields}
         onStrokesChange={handleStrokesChange}
         onTextFieldsChange={handleTextFieldsChange}
       />
