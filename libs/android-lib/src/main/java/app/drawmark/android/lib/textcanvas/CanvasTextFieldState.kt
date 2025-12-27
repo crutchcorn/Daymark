@@ -188,6 +188,21 @@ class CanvasTextFieldState(
      */
     val isEditable: Boolean get() = enabled && !readOnly
 
+    // ============ Callbacks ============
+
+    /**
+     * Callback for when text content changes.
+     * This is called whenever the text is modified (insert, delete, etc.).
+     */
+    var onTextChange: (() -> Unit)? = null
+
+    /**
+     * Notify that text has changed.
+     */
+    private fun notifyTextChanged() {
+        onTextChange?.invoke()
+    }
+
     // ============ State Modification Methods ============
 
     /**
@@ -195,13 +210,18 @@ class CanvasTextFieldState(
      * This is the primary method for modifying text content.
      */
     fun updateValue(newValue: TextFieldValue) {
+        val oldText = value.text
         value = newValue
+        if (oldText != newValue.text) {
+            notifyTextChanged()
+        }
     }
 
     /**
      * Update just the text content, preserving selection if possible.
      */
     fun updateText(newText: String) {
+        val oldText = value.text
         val currentSelection = value.selection
         val newSelection = if (currentSelection.start <= newText.length &&
             currentSelection.end <= newText.length) {
@@ -213,6 +233,9 @@ class CanvasTextFieldState(
             text = newText,
             selection = newSelection
         )
+        if (oldText != newText) {
+            notifyTextChanged()
+        }
     }
 
     /**
@@ -307,6 +330,7 @@ class CanvasTextFieldState(
         )
         undoManager.recordChange(preValue, postValue, allowMerge)
         value = postValue
+        notifyTextChanged()
     }
 
     /**
@@ -327,6 +351,7 @@ class CanvasTextFieldState(
             )
             undoManager.recordChange(preValue, postValue)
             value = postValue
+            notifyTextChanged()
             true
         } else {
             false
@@ -351,6 +376,7 @@ class CanvasTextFieldState(
             )
             undoManager.recordChange(preValue, postValue)
             value = postValue
+            notifyTextChanged()
             true
         } else {
             false
@@ -376,6 +402,7 @@ class CanvasTextFieldState(
             )
             undoManager.recordChange(preValue, postValue, allowMerge = false)
             value = postValue
+            notifyTextChanged()
             true
         } else {
             false
@@ -401,6 +428,7 @@ class CanvasTextFieldState(
             )
             undoManager.recordChange(preValue, postValue, allowMerge = false)
             value = postValue
+            notifyTextChanged()
             true
         } else {
             false
@@ -437,6 +465,7 @@ class CanvasTextFieldState(
             )
             undoManager.recordChange(preValue, postValue, allowMerge)
             value = postValue
+            notifyTextChanged()
         }
     }
 
@@ -449,7 +478,11 @@ class CanvasTextFieldState(
     fun undo(): Boolean {
         val previousValue = undoManager.undo(value)
         return if (previousValue != null) {
+            val textChanged = value.text != previousValue.text
             value = previousValue
+            if (textChanged) {
+                notifyTextChanged()
+            }
             true
         } else {
             false
@@ -463,7 +496,11 @@ class CanvasTextFieldState(
     fun redo(): Boolean {
         val nextValue = undoManager.redo(value)
         return if (nextValue != null) {
+            val textChanged = value.text != nextValue.text
             value = nextValue
+            if (textChanged) {
+                notifyTextChanged()
+            }
             true
         } else {
             false

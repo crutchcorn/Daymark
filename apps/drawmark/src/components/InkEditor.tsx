@@ -175,6 +175,9 @@ export const InkEditor = forwardRef<InkEditorRef, InkEditorProps>(
 
     // Load initial text fields when the component mounts
     useEffect(() => {
+      console.log('[InkEditor] useEffect for initialTextFields:', initialTextFields);
+      console.log('[InkEditor] hasLoadedInitialTextFields:', hasLoadedInitialTextFields.current);
+      console.log('[InkEditor] nativeRef.current:', nativeRef.current ? 'exists' : 'null');
       if (
         initialTextFields &&
         !hasLoadedInitialTextFields.current &&
@@ -182,6 +185,7 @@ export const InkEditor = forwardRef<InkEditorRef, InkEditorProps>(
       ) {
         // Small delay to ensure the native view is ready
         const timer = setTimeout(() => {
+          console.log('[InkEditor] Dispatching loadTextFields command with:', initialTextFields);
           dispatchCommand('loadTextFields', [initialTextFields]);
           hasLoadedInitialTextFields.current = true;
         }, 100);
@@ -198,6 +202,8 @@ export const InkEditor = forwardRef<InkEditorRef, InkEditorProps>(
     const handleTextFieldsChange = (
       event: NativeSyntheticEvent<TextFieldsChangeEvent>,
     ) => {
+      console.log('[InkEditor] handleTextFieldsChange received:', event.nativeEvent.textFields);
+      console.log('[InkEditor] onTextFieldsChange callback is:', onTextFieldsChange ? 'set' : 'undefined');
       onTextFieldsChange?.(event.nativeEvent.textFields);
     };
 
@@ -213,7 +219,7 @@ export const InkEditor = forwardRef<InkEditorRef, InkEditorProps>(
         brushColor={brushColor}
         brushSize={brushSize}
         brushFamily={brushFamily}
-        mode={mode}
+        mode={mode ?? undefined}
         onStrokesChange={handleStrokesChange}
         onTextFieldsChange={handleTextFieldsChange}
       />

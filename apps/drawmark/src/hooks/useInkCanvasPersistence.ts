@@ -14,11 +14,15 @@ export function useInkCanvasPersistence(canvasId: string) {
   const { data, isLoading, error } = useQuery({
     queryKey: [QUERY_KEY_PREFIX, canvasId],
     queryFn: async () => {
+      console.log('[useInkCanvasPersistence] Loading state for canvasId:', canvasId);
       const state = await getInkCanvasState(db, canvasId);
-      return {
+      console.log('[useInkCanvasPersistence] Loaded state:', state);
+      const result = {
         strokesJson: state?.strokesJson ?? '[]',
         textFieldsJson: state?.textFieldsJson ?? '[]',
       };
+      console.log('[useInkCanvasPersistence] Returning:', result);
+      return result;
     },
     staleTime: Infinity, // Don't refetch unless explicitly invalidated
   });
@@ -40,9 +44,12 @@ export function useInkCanvasPersistence(canvasId: string) {
   // Mutation to save text fields
   const saveTextFieldsMutation = useMutation({
     mutationFn: async (textFieldsJson: string) => {
+      console.log('[useInkCanvasPersistence] Saving text fields:', textFieldsJson);
       await saveTextFieldsState(db, canvasId, textFieldsJson);
+      console.log('[useInkCanvasPersistence] Text fields saved successfully');
     },
     onSuccess: (_data, textFieldsJson) => {
+      console.log('[useInkCanvasPersistence] saveTextFieldsMutation onSuccess:', textFieldsJson);
       // Update the cache directly instead of refetching
       queryClient.setQueryData([QUERY_KEY_PREFIX, canvasId], (old: { strokesJson: string; textFieldsJson: string } | undefined) => ({
         strokesJson: old?.strokesJson ?? '[]',
@@ -74,6 +81,7 @@ export function useInkCanvasPersistence(canvasId: string) {
 
   const handleTextFieldsChange = useCallback(
     (textFieldsJson: string) => {
+      console.log('[useInkCanvasPersistence] handleTextFieldsChange called with:', textFieldsJson);
       // Clear any pending save
       if (saveTextFieldsTimeoutRef.current) {
         clearTimeout(saveTextFieldsTimeoutRef.current);
@@ -81,6 +89,7 @@ export function useInkCanvasPersistence(canvasId: string) {
 
       // Debounce the save by 500ms
       saveTextFieldsTimeoutRef.current = setTimeout(() => {
+        console.log('[useInkCanvasPersistence] Debounce complete, calling mutate');
         saveTextFieldsMutation.mutate(textFieldsJson);
       }, 500);
     },

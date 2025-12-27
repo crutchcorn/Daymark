@@ -2,11 +2,13 @@ package app.drawmark.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.ink.authoring.InProgressStrokeId
 import androidx.ink.authoring.InProgressStrokesFinishedListener
 import androidx.ink.authoring.InProgressStrokesView
@@ -14,11 +16,14 @@ import androidx.ink.brush.Brush
 import androidx.ink.brush.StockBrushes
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.Stroke
+import app.drawmark.android.lib.ink.InkDisplaySurface
 import app.drawmark.android.lib.ink.InkEditorMode
 import app.drawmark.android.lib.ink.InkEditorSurface
 import app.drawmark.android.lib.ink.StrokeSerializer
 import app.drawmark.android.lib.textcanvas.InkCanvasTextFieldManager
 import kotlin.collections.plus
+
+private const val TAG = "InkEditorView"
 
 
 @SuppressLint("ViewConstructor")
@@ -46,6 +51,9 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
     // Editor mode - Draw or Text
     private var editorModeState = mutableStateOf(InkEditorMode.Draw)
 
+    private val composeView: ComposeView
+    private var wasDetached = false
+
     init {
         inProgressStrokesView.addFinishedStrokesListener(this)
         
@@ -54,33 +62,66 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
             notifyTextFieldsChanged()
         }
 
-        val composeView = ComposeView(context).apply {
-            setContent {
-                // Read state values inside the composable to trigger recomposition when they change
-                val currentBrushColor = brushColorState.value
-                val currentBrushSize = brushSizeState.value
-                val currentBrushFamily = brushFamilyState.value
-                val currentMode = editorModeState.value
-                
-                InkEditorSurface(
-                    inProgressStrokesView = inProgressStrokesView,
-                    finishedStrokesState = finishedStrokesState.value,
-                    canvasStrokeRenderer = canvasStrokeRenderer,
-                    getBrush = {
-                        Brush.createWithColorIntArgb(
-                            family = currentBrushFamily,
-                            colorIntArgb = currentBrushColor,
-                            size = currentBrushSize,
-                            epsilon = 0.1f
-                        )
-                    },
-                    mode = currentMode,
-                    textFieldManager = textFieldManager
-                )
-            }
+        composeView = ComposeView(context).apply {
+            // Keep composition alive across detach/attach cycles (e.g., tab switches)
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         }
 
         addView(composeView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+    }
+
+
+    private fun setComposeContent() {
+        composeView.setContent {
+            // Read state values inside the composable to trigger recomposition when they change
+            val currentBrushColor = brushColorState.value
+            val currentBrushSize = brushSizeState.value
+            val currentBrushFamily = brushFamilyState.value
+            val currentMode = editorModeState.value
+
+            InkEditorSurface(
+                inProgressStrokesView = inProgressStrokesView,
+                finishedStrokesState = finishedStrokesState.value,
+                canvasStrokeRenderer = canvasStrokeRenderer,
+                getBrush = {
+                    Brush.createWithColorIntArgb(
+                        family = currentBrushFamily,
+                        colorIntArgb = currentBrushColor,
+                        size = currentBrushSize,
+                        epsilon = 0.1f
+                    )
+                },
+                mode = currentMode,
+                textFieldManager = textFieldManager
+            )
+        }
+    }
+
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // Post to ensure ComposeView is fully attached before setting content
+        post {
+            if (composeView.isAttachedToWindow) {
+                if (wasDetached) {
+                    // Dispose old composition first for re-attachment
+                    composeView.disposeComposition()
+                }
+                setComposeContent()
+                // Force a full layout pass to trigger initial render
+                composeView.measure(
+                    MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+                )
+                composeView.layout(0, 0, width, height)
+                composeView.invalidate()
+            }
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        wasDetached = true
+        super.onDetachedFromWindow()
     }
 
     private fun createBrush(): Brush {
@@ -159,8 +200,13 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      * Loads text fields from a serialized JSON string.
      */
     fun loadTextFields(json: String) {
-        if (json.isEmpty()) return
+        Log.d(TAG, "loadTextFields called with json: $json")
+        if (json.isEmpty()) {
+            Log.d(TAG, "loadTextFields: json is empty, returning")
+            return
+        }
         textFieldManager.loadTextFields(json)
+        Log.d(TAG, "loadTextFields: loaded ${textFieldManager.textFields.size} text fields")
     }
 
     /**
@@ -183,6 +229,8 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      */
     private fun notifyTextFieldsChanged() {
         val serialized = textFieldManager.serializeTextFields()
+        Log.d(TAG, "notifyTextFieldsChanged: serialized=$serialized")
+        Log.d(TAG, "notifyTextFieldsChanged: onTextFieldsChange callback is ${if (onTextFieldsChange != null) "set" else "null"}")
         onTextFieldsChange?.invoke(serialized)
     }
 

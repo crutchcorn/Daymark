@@ -33,6 +33,10 @@ import androidx.compose.ui.text.input.TextFieldValue
  */
 @Stable
 class InkCanvasTextFieldManager {
+    companion object {
+        private const val TAG = "InkCanvasTextFieldManager"
+    }
+
     /**
      * List of text field states managed by this manager.
      */
@@ -56,10 +60,33 @@ class InkCanvasTextFieldManager {
     var onTextFieldsChange: (() -> Unit)? = null
 
     /**
+     * Flag to suppress change notifications during loading.
+     */
+    private var suppressNotifications = false
+
+    /**
      * Notify that text fields have changed.
      */
     private fun notifyTextFieldsChanged() {
+        if (suppressNotifications) {
+            android.util.Log.d(TAG, "notifyTextFieldsChanged: SUPPRESSED (during load)")
+            return
+        }
+        android.util.Log.d(TAG, "notifyTextFieldsChanged called, textFields count: ${textFields.size}")
+        textFields.forEachIndexed { index, state ->
+            android.util.Log.d(TAG, "  TextField[$index]: text='${state.text}', position=${state.position}")
+        }
         onTextFieldsChange?.invoke()
+    }
+
+    /**
+     * Set up the text change callback for a text field state.
+     */
+    private fun setupTextChangeCallback(state: CanvasTextFieldState) {
+        state.onTextChange = {
+            android.util.Log.d(TAG, "Text changed in text field: '${state.text}'")
+            notifyTextFieldsChanged()
+        }
     }
 
     /**
@@ -74,6 +101,7 @@ class InkCanvasTextFieldManager {
         initialText: String = ""
     ): CanvasTextFieldState {
         val state = CanvasTextFieldState.withText(initialText, position)
+        setupTextChangeCallback(state)
         textFields.add(state)
         notifyTextFieldsChanged()
         return state
@@ -89,6 +117,7 @@ class InkCanvasTextFieldManager {
         if (focusedTextField == state) {
             focusedTextField = null
         }
+        state.onTextChange = null  // Clean up callback
         val removed = textFields.remove(state)
         if (removed) {
             notifyTextFieldsChanged()
@@ -494,9 +523,25 @@ class InkCanvasTextFieldManager {
     fun loadTextFields(json: String) {
         if (json.isBlank()) return
         
-        clearTextFields()
-        val deserializedTextFields = textFieldSerializer.deserializeTextFields(json)
-        textFields.addAll(deserializedTextFields)
+        // Suppress notifications during loading to avoid sending empty state
+        suppressNotifications = true
+        try {
+            // Clear existing text fields and their callbacks
+            textFields.forEach { it.onTextChange = null }
+            focusedTextField = null
+            textFields.clear()
+            
+            val deserializedTextFields = textFieldSerializer.deserializeTextFields(json)
+            // Set up text change callbacks for loaded text fields
+            deserializedTextFields.forEach { state ->
+                setupTextChangeCallback(state)
+            }
+            textFields.addAll(deserializedTextFields)
+        } finally {
+            suppressNotifications = false
+        }
+        // Note: We intentionally don't notify after loading since the data came from storage
+        // and we don't want to re-save what we just loaded
     }
 }
 

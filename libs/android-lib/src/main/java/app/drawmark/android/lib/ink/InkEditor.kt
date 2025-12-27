@@ -3,6 +3,7 @@ package app.drawmark.android.lib.ink
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -76,6 +77,9 @@ fun InkEditorSurface(
                 val predictor = MotionEventPredictor.newInstance(rootView)
                 predictorRef.value = predictor
 
+                // Remove from existing parent if any (prevents IllegalStateException on recomposition)
+                (inProgressStrokesView.parent as? ViewGroup)?.removeView(inProgressStrokesView)
+                
                 rootView.addView(inProgressStrokesView)
                 rootView
             },

@@ -171,7 +171,8 @@ fun InkDisplaySurfaceWithText(
         }
 
         // Overlay actual CanvasTextField composables for focus/keyboard handling
-        if (isTextMode && textFieldManager != null) {
+        // These are always mounted (for layout purposes) but only interactive in text mode
+        if (textFieldManager != null) {
             textFieldManager.textFields.forEach { textFieldState ->
                 CanvasTextField(
                     state = textFieldState,
@@ -191,7 +192,9 @@ fun InkDisplaySurfaceWithText(
                     cursorColor = cursorColor,
                     selectionColor = selectionColor,
                     // Disable pointer handling - InkCanvas handles all gestures including handle drags
-                    handlePointerInput = false
+                    // Only allow focus/editing in text mode
+                    handlePointerInput = false,
+                    enabled = isTextMode
                 )
             }
         }

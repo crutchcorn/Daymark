@@ -31,6 +31,11 @@ export interface InkCanvasProps {
    * This should be a JSON string from a previous save.
    */
   initialStrokes?: string;
+  /**
+   * Initial text fields to load when the editor mounts.
+   * This should be a JSON string from a previous save.
+   */
+  initialTextFields?: string;
 }
 
 const NativeInkCanvas =
@@ -45,7 +50,7 @@ const NativeInkCanvas =
  * Note: This component is only available on Android.
  */
 export const InkCanvas = forwardRef<InkCanvasRef, InkCanvasProps>(
-  ({ style, initialStrokes }, ref) => {
+  ({ style, initialStrokes, initialTextFields }, ref) => {
     const nativeRef = useRef(null);
     const hasLoadedInitialStrokes = useRef(false);
 
@@ -67,6 +72,9 @@ export const InkCanvas = forwardRef<InkCanvasRef, InkCanvasProps>(
       loadStrokes: (strokesJson: string) => {
         dispatchCommand('loadStrokes', [strokesJson]);
       },
+      loadTextFields: (textFieldsJson: string) => {
+        dispatchCommand('loadTextFields', [textFieldsJson]);
+      }
     }));
 
     // Load initial strokes when the component mounts
@@ -84,6 +92,23 @@ export const InkCanvas = forwardRef<InkCanvasRef, InkCanvasProps>(
         return () => clearTimeout(timer);
       }
     }, [initialStrokes]);
+
+    // Load initial text fields when the component mounts
+    const hasLoadedInitialTextFields = useRef(false);
+    useEffect(() => {
+      if (
+        initialTextFields &&
+        !hasLoadedInitialTextFields.current &&
+        nativeRef.current
+      ) {
+        // Small delay to ensure the native view is ready
+        const timer = setTimeout(() => {
+          dispatchCommand('loadTextFields', [initialTextFields]);
+          hasLoadedInitialTextFields.current = true;
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    }, [initialTextFields]);
 
     if (Platform.OS !== 'android' || !NativeInkCanvas) {
       // Return null or a placeholder for non-Android platforms
