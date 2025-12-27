@@ -18,15 +18,21 @@ import androidx.ink.strokes.Stroke
 import app.drawmark.android.lib.ink.InkEditorMode
 import app.drawmark.android.lib.ink.InkEditorSurface
 import app.drawmark.android.lib.ink.StrokeSerializer
+import app.drawmark.android.lib.ink.StrokeWithZIndex
+import app.drawmark.android.lib.ink.ZIndexCounter
 import app.drawmark.android.lib.textcanvas.InkCanvasTextFieldManager
 
 @SuppressLint("ViewConstructor")
 class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesFinishedListener {
 
     private val inProgressStrokesView = InProgressStrokesView(context)
-    private val finishedStrokesState = mutableStateOf(emptySet<Stroke>())
+    // Use list with z-index for proper ordering
+    private val strokesWithZIndexState = mutableStateOf(emptyList<StrokeWithZIndex>())
     private val canvasStrokeRenderer = CanvasStrokeRenderer.create()
     private val strokeSerializer = StrokeSerializer()
+    
+    // Z-index counter for ordering strokes and text fields
+    private val zIndexCounter = ZIndexCounter()
     
     // Text field manager - held at view level for serialization access
     private val textFieldManager = InkCanvasTextFieldManager()
@@ -74,10 +80,11 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
             val currentBrushFamily = brushFamilyState.value
             val currentBrushOpacity = brushOpacityState.value
             val currentMode = editorModeState.value
+            val currentStrokesWithZIndex = strokesWithZIndexState.value
 
             InkEditorSurface(
                 inProgressStrokesView = inProgressStrokesView,
-                finishedStrokesState = finishedStrokesState.value,
+                strokesWithZIndex = currentStrokesWithZIndex,
                 canvasStrokeRenderer = canvasStrokeRenderer,
                 getBrush = {
                     // Apply opacity by modifying the alpha channel of the color
@@ -91,7 +98,8 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
                     )
                 },
                 mode = currentMode,
-                textFieldManager = textFieldManager
+                textFieldManager = textFieldManager,
+                getNextZIndex = { zIndexCounter.next() }
             )
         }
     }
@@ -181,8 +189,9 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      * Clears all strokes from the canvas.
      */
     fun clearCanvas() {
-        finishedStrokesState.value = emptySet()
+        strokesWithZIndexState.value = emptyList()
         textFieldManager.clearTextFields()
+        zIndexCounter.reset()
         notifyStrokesChanged()
         notifyTextFieldsChanged()
     }
@@ -192,15 +201,20 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      */
     fun loadStrokes(json: String) {
         if (json.isEmpty()) return
-        val strokes = strokeSerializer.deserializeStrokes(json)
-        finishedStrokesState.value = strokes
+        val strokes = strokeSerializer.deserializeStrokesWithZIndex(json)
+        strokesWithZIndexState.value = strokes
+        
+        // Update z-index counter to be higher than any loaded element
+        val maxZIndex = strokes.maxOfOrNull { it.zIndex } ?: 0L
+        val maxTextFieldZIndex = textFieldManager.textFields.maxOfOrNull { it.zIndex } ?: 0L
+        zIndexCounter.reset(maxOf(maxZIndex, maxTextFieldZIndex) + 1)
     }
 
     /**
      * Gets the current strokes as a serialized JSON string.
      */
     fun getSerializedStrokes(): String {
-        return strokeSerializer.serializeStrokes(finishedStrokesState.value)
+        return strokeSerializer.serializeStrokesWithZIndex(strokesWithZIndexState.value)
     }
 
     /**
@@ -209,6 +223,11 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
     fun loadTextFields(json: String) {
         if (json.isEmpty()) return
         textFieldManager.loadTextFields(json)
+        
+        // Update z-index counter to be higher than any loaded element
+        val maxZIndex = strokesWithZIndexState.value.maxOfOrNull { it.zIndex } ?: 0L
+        val maxTextFieldZIndex = textFieldManager.textFields.maxOfOrNull { it.zIndex } ?: 0L
+        zIndexCounter.reset(maxOf(maxZIndex, maxTextFieldZIndex) + 1)
     }
 
     /**
@@ -222,7 +241,7 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      * Notifies the listener that strokes have changed.
      */
     private fun notifyStrokesChanged() {
-        val serialized = strokeSerializer.serializeStrokes(finishedStrokesState.value)
+        val serialized = strokeSerializer.serializeStrokesWithZIndex(strokesWithZIndexState.value)
         onStrokesChange?.invoke(serialized)
     }
 
@@ -235,7 +254,11 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
     }
 
     override fun onStrokesFinished(strokes: Map<InProgressStrokeId, Stroke>) {
-        finishedStrokesState.value += strokes.values
+        // Add each stroke with its own z-index for proper ordering
+        val newStrokesWithZIndex = strokes.values.map { stroke ->
+            StrokeWithZIndex(stroke, zIndexCounter.next())
+        }
+        strokesWithZIndexState.value = strokesWithZIndexState.value + newStrokesWithZIndex
         inProgressStrokesView.removeFinishedStrokes(strokes.keys)
         notifyStrokesChanged()
     }

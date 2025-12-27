@@ -19,12 +19,22 @@ import androidx.compose.ui.text.input.TextFieldValue
  *
  * @param initialValue The initial text field value
  * @param initialPosition The initial position on the canvas (top-left corner)
+ * @param initialZIndex The initial z-index for ordering with other canvas elements
  */
 @Stable
 class CanvasTextFieldState(
     initialValue: TextFieldValue = TextFieldValue(),
-    initialPosition: Offset = Offset.Zero
+    initialPosition: Offset = Offset.Zero,
+    initialZIndex: Long = 0L
 ) {
+    // ============ Z-Index State ============
+
+    /**
+     * The z-index of this text field for ordering with other canvas elements.
+     * Higher values are drawn on top of lower values.
+     */
+    var zIndex: Long = initialZIndex
+
     // ============ Text Content State ============
 
     /**
@@ -699,11 +709,16 @@ class CanvasTextFieldState(
     companion object {
         /**
          * Create a new state with the given initial text.
+         *
+         * @param text The initial text content
+         * @param position The initial position on the canvas
+         * @param zIndex The z-index for ordering with other canvas elements
          */
-        fun withText(text: String, position: Offset = Offset.Zero): CanvasTextFieldState {
+        fun withText(text: String, position: Offset = Offset.Zero, zIndex: Long = 0L): CanvasTextFieldState {
             return CanvasTextFieldState(
                 initialValue = TextFieldValue(text = text, selection = TextRange(text.length)),
-                initialPosition = position
+                initialPosition = position,
+                initialZIndex = zIndex
             )
         }
     }

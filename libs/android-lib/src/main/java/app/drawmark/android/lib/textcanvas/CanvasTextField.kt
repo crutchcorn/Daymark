@@ -75,6 +75,8 @@ import kotlinx.coroutines.isActive
  * @param onImeAction Callback when an IME action is performed
  * @param handlePointerInput Whether this composable should handle pointer input.
  *                           Set to false when managed by InkCanvas which handles gestures.
+ * @param drawVisuals Whether this composable should draw text visuals.
+ *                    Set to false when the parent canvas handles drawing for z-ordering.
  */
 @Composable
 fun CanvasTextField(
@@ -90,7 +92,8 @@ fun CanvasTextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     imeOptions: ImeOptions = ImeOptions.Default,
     onImeAction: (ImeAction) -> Unit = {},
-    handlePointerInput: Boolean = true
+    handlePointerInput: Boolean = true,
+    drawVisuals: Boolean = true
 ) {
     val density = LocalDensity.current
     val fontFamilyResolver = LocalFontFamilyResolver.current
@@ -457,17 +460,21 @@ fun CanvasTextField(
             .then(keyboardModifier)
             .then(pointerModifier)
     ) {
-        Canvas(modifier = Modifier.matchParentSize()) {
-            textLayoutResult?.let { layoutResult ->
-                CanvasTextDelegate.draw(
-                    canvas = drawContext.canvas,
-                    state = state,
-                    textLayoutResult = layoutResult,
-                    position = Offset.Zero,
-                    cursorColor = cursorColor,
-                    selectionColor = selectionColor,
-                    showCursor = state.hasFocus && state.cursorVisible && !state.hasSelection
-                )
+        // Only draw visuals if drawVisuals is true
+        // When used in InkCanvas, the parent canvas handles drawing for proper z-ordering
+        if (drawVisuals) {
+            Canvas(modifier = Modifier.matchParentSize()) {
+                textLayoutResult?.let { layoutResult ->
+                    CanvasTextDelegate.draw(
+                        canvas = drawContext.canvas,
+                        state = state,
+                        textLayoutResult = layoutResult,
+                        position = Offset.Zero,
+                        cursorColor = cursorColor,
+                        selectionColor = selectionColor,
+                        showCursor = state.hasFocus && state.cursorVisible && !state.hasSelection
+                    )
+                }
             }
         }
     }

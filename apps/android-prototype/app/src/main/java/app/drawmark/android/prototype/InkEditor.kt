@@ -20,6 +20,8 @@ import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.Stroke
 import app.drawmark.android.lib.ink.InkEditorMode
 import app.drawmark.android.lib.ink.InkEditorSurface
+import app.drawmark.android.lib.ink.StrokeWithZIndex
+import app.drawmark.android.lib.ink.ZIndexCounter
 import app.drawmark.android.lib.textcanvas.rememberInkCanvasTextFieldManager
 
 @Composable
@@ -28,8 +30,9 @@ fun InkEditor(
     modifier: Modifier = Modifier,
 ) {
     val inProgressStrokesView = remember { InProgressStrokesView(context) }
-    val finishedStrokesState = remember { mutableStateOf(emptySet<Stroke>()) }
+    val strokesWithZIndexState = remember { mutableStateOf(emptyList<StrokeWithZIndex>()) }
     val canvasStrokeRenderer = remember { CanvasStrokeRenderer.create() }
+    val zIndexCounter = remember { ZIndexCounter() }
 
     // Brush options state (mutable to allow color changes)
     val brushOptions = remember { mutableStateOf(defaultBrushOptions) }
@@ -56,10 +59,13 @@ fun InkEditor(
     }
 
     // Set up the finished strokes listener
-    val finishedStrokesListener = remember {
+    val finishedStrokesListener = remember(zIndexCounter) {
         object : InProgressStrokesFinishedListener {
             override fun onStrokesFinished(strokes: Map<InProgressStrokeId, Stroke>) {
-                finishedStrokesState.value = finishedStrokesState.value + strokes.values
+                val newStrokesWithZIndex = strokes.values.map { stroke ->
+                    StrokeWithZIndex(stroke, zIndexCounter.next())
+                }
+                strokesWithZIndexState.value = strokesWithZIndexState.value + newStrokesWithZIndex
                 inProgressStrokesView.removeFinishedStrokes(strokes.keys)
             }
         }
@@ -77,11 +83,12 @@ fun InkEditor(
         // Drawing surface
         InkEditorSurface(
             inProgressStrokesView = inProgressStrokesView,
-            finishedStrokesState = finishedStrokesState.value,
+            strokesWithZIndex = strokesWithZIndexState.value,
             canvasStrokeRenderer = canvasStrokeRenderer,
             getBrush = getBrush,
             mode = editorMode.value,
             textFieldManager = textFieldManager,
+            getNextZIndex = { zIndexCounter.next() }
         )
 
         Box(

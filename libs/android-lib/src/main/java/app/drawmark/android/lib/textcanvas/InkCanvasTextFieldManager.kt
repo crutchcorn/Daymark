@@ -83,13 +83,15 @@ class InkCanvasTextFieldManager {
      *
      * @param position The canvas position for the text field
      * @param initialText Initial text content
+     * @param zIndex The z-index for ordering with other canvas elements (default: 0)
      * @return The created text field state
      */
     fun addTextField(
         position: Offset,
-        initialText: String = ""
+        initialText: String = "",
+        zIndex: Long = 0L
     ): CanvasTextFieldState {
-        val state = CanvasTextFieldState.withText(initialText, position)
+        val state = CanvasTextFieldState.withText(initialText, position, zIndex)
         setupTextChangeCallback(state)
         textFields.add(state)
         notifyTextFieldsChanged()
@@ -449,17 +451,35 @@ class InkCanvasTextFieldManager {
         selectionColor: Color = Color.Blue.copy(alpha = 0.4f)
     ) {
         textFields.forEach { state ->
-            state.textLayoutResult?.let { layoutResult ->
-                CanvasTextDelegate.draw(
-                    canvas = canvas.nativeCanvas,
-                    state = state,
-                    textLayoutResult = layoutResult,
-                    position = state.position,
-                    cursorColor = cursorColor,
-                    selectionColor = selectionColor,
-                    showCursor = state.hasFocus && state.cursorVisible && !state.hasSelection
-                )
-            }
+            drawSingleTextField(state, canvas, cursorColor, selectionColor)
+        }
+    }
+
+    /**
+     * Draw a single text field on the canvas.
+     * Used for z-ordered rendering where text fields are interleaved with strokes.
+     *
+     * @param textField The text field state to draw
+     * @param canvas The Compose canvas to draw on
+     * @param cursorColor The cursor color
+     * @param selectionColor The selection highlight color
+     */
+    fun drawSingleTextField(
+        textField: CanvasTextFieldState,
+        canvas: androidx.compose.ui.graphics.Canvas,
+        cursorColor: Color = Color.Black,
+        selectionColor: Color = Color.Blue.copy(alpha = 0.4f)
+    ) {
+        textField.textLayoutResult?.let { layoutResult ->
+            CanvasTextDelegate.draw(
+                canvas = canvas.nativeCanvas,
+                state = textField,
+                textLayoutResult = layoutResult,
+                position = textField.position,
+                cursorColor = cursorColor,
+                selectionColor = selectionColor,
+                showCursor = textField.hasFocus && textField.cursorVisible && !textField.hasSelection
+            )
         }
     }
 

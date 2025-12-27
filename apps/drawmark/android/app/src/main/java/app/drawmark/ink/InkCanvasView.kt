@@ -7,15 +7,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
-import androidx.ink.strokes.Stroke
 import app.drawmark.android.lib.ink.InkDisplaySurfaceWithText
 import app.drawmark.android.lib.ink.StrokeSerializer
+import app.drawmark.android.lib.ink.StrokeWithZIndex
 import app.drawmark.android.lib.textcanvas.InkCanvasTextFieldManager
 import app.drawmark.android.lib.textcanvas.TextFieldSerializer
 
 @SuppressLint("ViewConstructor")
 class InkCanvasView(context: Context) : FrameLayout(context) {
-    private val finishedStrokesState = mutableStateOf(emptySet<Stroke>())
+    private val strokesWithZIndexState = mutableStateOf(emptyList<StrokeWithZIndex>())
     private val canvasStrokeRenderer = CanvasStrokeRenderer.create()
     private val strokeSerializer = StrokeSerializer()
     private val textFieldSerializer = TextFieldSerializer()
@@ -34,7 +34,7 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
     private fun setComposeContent() {
         composeView.setContent {
             InkDisplaySurfaceWithText(
-                finishedStrokesState = finishedStrokesState.value,
+                strokesWithZIndex = strokesWithZIndexState.value,
                 canvasStrokeRenderer = canvasStrokeRenderer,
                 textFieldManager = textFieldManager,
                 isTextMode = false  // Read-only display, text fields not editable
@@ -73,15 +73,15 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
      */
     fun loadStrokes(json: String) {
         if (json.isEmpty()) return
-        val strokes = strokeSerializer.deserializeStrokes(json)
-        finishedStrokesState.value = strokes
+        val strokes = strokeSerializer.deserializeStrokesWithZIndex(json)
+        strokesWithZIndexState.value = strokes
     }
 
     /**
      * Gets the current strokes as a serialized JSON string.
      */
     fun getSerializedStrokes(): String {
-        return strokeSerializer.serializeStrokes(finishedStrokesState.value)
+        return strokeSerializer.serializeStrokesWithZIndex(strokesWithZIndexState.value)
     }
 
     /**
@@ -92,7 +92,7 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
         val textFields = textFieldSerializer.deserializeTextFields(json)
         textFieldManager.clearTextFields()
         textFields.forEach { textField ->
-            textFieldManager.addTextField(textField.position, textField.text)
+            textFieldManager.addTextField(textField.position, textField.text, textField.zIndex)
         }
     }
 }

@@ -50,11 +50,13 @@ enum class InkEditorMode {
 @Composable
 fun InkEditorSurface(
     inProgressStrokesView: InProgressStrokesView,
-    finishedStrokesState: Set<Stroke>,
+    finishedStrokesState: Set<Stroke> = emptySet(),
+    strokesWithZIndex: List<StrokeWithZIndex> = emptyList(),
     canvasStrokeRenderer: CanvasStrokeRenderer,
     getBrush: () -> Brush,
     mode: InkEditorMode = InkEditorMode.Draw,
-    textFieldManager: InkCanvasTextFieldManager? = null
+    textFieldManager: InkCanvasTextFieldManager? = null,
+    getNextZIndex: () -> Long = { 0L }
 ) {
     val currentPointerId = remember { mutableStateOf<Int?>(null) }
     val currentStrokeId = remember { mutableStateOf<InProgressStrokeId?>(null) }
@@ -173,6 +175,7 @@ fun InkEditorSurface(
         // Render strokes and text fields  
         InkDisplaySurfaceWithText(
             finishedStrokesState = finishedStrokesState,
+            strokesWithZIndex = strokesWithZIndex,
             canvasStrokeRenderer = canvasStrokeRenderer,
             textFieldManager = textFieldManager,
             isTextMode = mode == InkEditorMode.Text
@@ -269,8 +272,8 @@ fun InkEditorSurface(
                                 textFieldManager.textFields.forEach { it.showContextMenu = false }
                                 
                                 if (!textFieldManager.handleTap(downPosition)) {
-                                    // No text field was tapped - create a new one
-                                    val newTextField = textFieldManager.addTextField(downPosition, "")
+                                    // No text field was tapped - create a new one with proper z-index
+                                    val newTextField = textFieldManager.addTextField(downPosition, "", getNextZIndex())
                                     textFieldManager.requestFocus(newTextField)
                                 }
                             }

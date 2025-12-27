@@ -17,7 +17,16 @@ import com.google.gson.reflect.TypeToken
  */
 data class SerializedStroke(
     val inputs: SerializedStrokeInputBatch,
-    val brush: SerializedBrush
+    val brush: SerializedBrush,
+    val zIndex: Long = 0L
+)
+
+/**
+ * A stroke with its z-index for proper ordering with other canvas elements.
+ */
+data class StrokeWithZIndex(
+    val stroke: Stroke,
+    val zIndex: Long
 )
 
 /**
@@ -98,12 +107,28 @@ class StrokeSerializer {
 
     /**
      * Serializes a set of strokes to a JSON string.
+     * Note: This method does not preserve z-index. Use serializeStrokesWithZIndex for z-ordering support.
      */
     fun serializeStrokes(strokes: Set<Stroke>): String {
         val serializedStrokes = strokes.map { stroke ->
             SerializedStroke(
                 inputs = serializeStrokeInputBatch(stroke.inputs),
-                brush = serializeBrush(stroke.brush)
+                brush = serializeBrush(stroke.brush),
+                zIndex = 0L
+            )
+        }
+        return gson.toJson(serializedStrokes)
+    }
+
+    /**
+     * Serializes a list of strokes with z-index information to a JSON string.
+     */
+    fun serializeStrokesWithZIndex(strokes: List<StrokeWithZIndex>): String {
+        val serializedStrokes = strokes.map { strokeWithZIndex ->
+            SerializedStroke(
+                inputs = serializeStrokeInputBatch(strokeWithZIndex.stroke.inputs),
+                brush = serializeBrush(strokeWithZIndex.stroke.brush),
+                zIndex = strokeWithZIndex.zIndex
             )
         }
         return gson.toJson(serializedStrokes)
@@ -111,6 +136,7 @@ class StrokeSerializer {
 
     /**
      * Deserializes a JSON string to a set of strokes.
+     * Note: This method does not preserve z-index. Use deserializeStrokesWithZIndex for z-ordering support.
      */
     fun deserializeStrokes(json: String): Set<Stroke> {
         if (json.isBlank()) return emptySet()
@@ -121,6 +147,25 @@ class StrokeSerializer {
             serializedStrokes.mapNotNull { deserializeStroke(it) }.toSet()
         } catch (e: Exception) {
             emptySet()
+        }
+    }
+
+    /**
+     * Deserializes a JSON string to a list of strokes with z-index information.
+     */
+    fun deserializeStrokesWithZIndex(json: String): List<StrokeWithZIndex> {
+        if (json.isBlank()) return emptyList()
+
+        return try {
+            val type = object : TypeToken<List<SerializedStroke>>() {}.type
+            val serializedStrokes: List<SerializedStroke> = gson.fromJson(json, type)
+            serializedStrokes.mapNotNull { serialized ->
+                deserializeStroke(serialized)?.let { stroke ->
+                    StrokeWithZIndex(stroke, serialized.zIndex)
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 

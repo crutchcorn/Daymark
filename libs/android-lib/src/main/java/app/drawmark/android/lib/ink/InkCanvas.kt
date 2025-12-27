@@ -53,10 +53,23 @@ fun InkDisplaySurface(
 
 /**
  * Enhanced display surface that renders both strokes and text fields.
+ * 
+ * Elements are rendered in z-index order so that elements drawn later
+ * appear on top of elements drawn earlier, regardless of whether they
+ * are strokes or text fields.
+ * 
+ * @param finishedStrokesState The set of finished strokes to render (legacy, no z-ordering)
+ * @param strokesWithZIndex List of strokes with z-index for proper ordering (preferred)
+ * @param canvasStrokeRenderer The renderer for drawing strokes
+ * @param textFieldManager The manager for text fields
+ * @param isTextMode Whether the canvas is in text editing mode
+ * @param cursorColor The color for text cursors
+ * @param selectionColor The color for text selection highlights
  */
 @Composable
 fun InkDisplaySurfaceWithText(
-    finishedStrokesState: Set<Stroke>,
+    finishedStrokesState: Set<Stroke> = emptySet(),
+    strokesWithZIndex: List<StrokeWithZIndex> = emptyList(),
     canvasStrokeRenderer: CanvasStrokeRenderer,
     textFieldManager: InkCanvasTextFieldManager?,
     isTextMode: Boolean = false,
@@ -153,25 +166,49 @@ fun InkDisplaySurfaceWithText(
             drawContext.canvas.nativeCanvas.concat(canvasTransform)
             val canvas = drawContext.canvas.nativeCanvas
 
-            // Draw strokes first
-            finishedStrokesState.forEach { stroke ->
-                canvasStrokeRenderer.draw(
-                    stroke = stroke,
-                    canvas = canvas,
-                    strokeToScreenTransform = canvasTransform
-                )
+            // Determine which strokes to render
+            val strokeElements: List<CanvasElement> = if (strokesWithZIndex.isNotEmpty()) {
+                // Use strokes with z-index for proper ordering
+                strokesWithZIndex.map { CanvasElement.StrokeElement(it.stroke, it.zIndex) }
+            } else {
+                // Legacy mode: render all strokes at z-index 0
+                finishedStrokesState.map { CanvasElement.StrokeElement(it, 0L) }
             }
 
-            // Draw text fields on top (visual rendering only)
-            textFieldManager?.draw(
-                canvas = drawContext.canvas,
-                cursorColor = cursorColor,
-                selectionColor = selectionColor
-            )
+            // Create text field elements
+            val textFieldElements: List<CanvasElement> = textFieldManager?.textFields?.map { textField ->
+                CanvasElement.TextFieldElement(textField, textField.zIndex)
+            } ?: emptyList()
+
+            // Combine and sort all elements by z-index
+            val allElements = (strokeElements + textFieldElements).sortedBy { it.zIndex }
+
+            // Render elements in z-order
+            allElements.forEach { element ->
+                when (element) {
+                    is CanvasElement.StrokeElement -> {
+                        canvasStrokeRenderer.draw(
+                            stroke = element.stroke,
+                            canvas = canvas,
+                            strokeToScreenTransform = canvasTransform
+                        )
+                    }
+                    is CanvasElement.TextFieldElement -> {
+                        // Draw individual text field
+                        textFieldManager?.drawSingleTextField(
+                            textField = element.textField,
+                            canvas = drawContext.canvas,
+                            cursorColor = cursorColor,
+                            selectionColor = selectionColor
+                        )
+                    }
+                }
+            }
         }
 
         // Overlay actual CanvasTextField composables for focus/keyboard handling
         // These are always mounted (for layout purposes) but only interactive in text mode
+        // Visual drawing is disabled here - the main Canvas handles it for proper z-ordering
         if (textFieldManager != null) {
             textFieldManager.textFields.forEach { textFieldState ->
                 CanvasTextField(
@@ -194,7 +231,9 @@ fun InkDisplaySurfaceWithText(
                     // Disable pointer handling - InkCanvas handles all gestures including handle drags
                     // Only allow focus/editing in text mode
                     handlePointerInput = false,
-                    enabled = isTextMode
+                    enabled = isTextMode,
+                    // Disable visual drawing - the main Canvas draws text for proper z-ordering with strokes
+                    drawVisuals = false
                 )
             }
         }
