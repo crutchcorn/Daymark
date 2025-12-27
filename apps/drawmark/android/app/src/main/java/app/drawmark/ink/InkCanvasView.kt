@@ -2,7 +2,6 @@ package app.drawmark.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.ComposeView
@@ -13,8 +12,6 @@ import app.drawmark.android.lib.ink.InkDisplaySurfaceWithText
 import app.drawmark.android.lib.ink.StrokeSerializer
 import app.drawmark.android.lib.textcanvas.InkCanvasTextFieldManager
 import app.drawmark.android.lib.textcanvas.TextFieldSerializer
-
-private const val TAG = "InkCanvasView"
 
 @SuppressLint("ViewConstructor")
 class InkCanvasView(context: Context) : FrameLayout(context) {
@@ -91,18 +88,11 @@ class InkCanvasView(context: Context) : FrameLayout(context) {
      * Loads text fields from a serialized JSON string.
      */
     fun loadTextFields(json: String) {
-        Log.d(TAG, "loadTextFields called with: $json")
-        if (json.isEmpty()) {
-            Log.d(TAG, "loadTextFields: json is empty, returning")
-            return
-        }
+        if (json.isEmpty()) return
         val textFields = textFieldSerializer.deserializeTextFields(json)
-        Log.d(TAG, "loadTextFields: deserialized ${textFields.size} text fields")
         textFieldManager.clearTextFields()
         textFields.forEach { textField ->
-            Log.d(TAG, "loadTextFields: adding text field with text='${textField.text}' at ${textField.position}")
             textFieldManager.addTextField(textField.position, textField.text)
         }
-        Log.d(TAG, "loadTextFields: textFieldManager now has ${textFieldManager.textFields.size} text fields")
     }
 }

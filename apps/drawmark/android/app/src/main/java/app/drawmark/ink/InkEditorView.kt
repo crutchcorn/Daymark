@@ -2,7 +2,6 @@ package app.drawmark.ink
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
@@ -16,15 +15,10 @@ import androidx.ink.brush.Brush
 import androidx.ink.brush.StockBrushes
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.Stroke
-import app.drawmark.android.lib.ink.InkDisplaySurface
 import app.drawmark.android.lib.ink.InkEditorMode
 import app.drawmark.android.lib.ink.InkEditorSurface
 import app.drawmark.android.lib.ink.StrokeSerializer
 import app.drawmark.android.lib.textcanvas.InkCanvasTextFieldManager
-import kotlin.collections.plus
-
-private const val TAG = "InkEditorView"
-
 
 @SuppressLint("ViewConstructor")
 class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesFinishedListener {
@@ -200,13 +194,8 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      * Loads text fields from a serialized JSON string.
      */
     fun loadTextFields(json: String) {
-        Log.d(TAG, "loadTextFields called with json: $json")
-        if (json.isEmpty()) {
-            Log.d(TAG, "loadTextFields: json is empty, returning")
-            return
-        }
+        if (json.isEmpty()) return
         textFieldManager.loadTextFields(json)
-        Log.d(TAG, "loadTextFields: loaded ${textFieldManager.textFields.size} text fields")
     }
 
     /**
@@ -229,8 +218,6 @@ class InkEditorView(context: Context) : FrameLayout(context), InProgressStrokesF
      */
     private fun notifyTextFieldsChanged() {
         val serialized = textFieldManager.serializeTextFields()
-        Log.d(TAG, "notifyTextFieldsChanged: serialized=$serialized")
-        Log.d(TAG, "notifyTextFieldsChanged: onTextFieldsChange callback is ${if (onTextFieldsChange != null) "set" else "null"}")
         onTextFieldsChange?.invoke(serialized)
     }
 

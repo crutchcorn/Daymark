@@ -33,9 +33,6 @@ import androidx.compose.ui.text.input.TextFieldValue
  */
 @Stable
 class InkCanvasTextFieldManager {
-    companion object {
-        private const val TAG = "InkCanvasTextFieldManager"
-    }
 
     /**
      * List of text field states managed by this manager.
@@ -68,14 +65,7 @@ class InkCanvasTextFieldManager {
      * Notify that text fields have changed.
      */
     private fun notifyTextFieldsChanged() {
-        if (suppressNotifications) {
-            android.util.Log.d(TAG, "notifyTextFieldsChanged: SUPPRESSED (during load)")
-            return
-        }
-        android.util.Log.d(TAG, "notifyTextFieldsChanged called, textFields count: ${textFields.size}")
-        textFields.forEachIndexed { index, state ->
-            android.util.Log.d(TAG, "  TextField[$index]: text='${state.text}', position=${state.position}")
-        }
+        if (suppressNotifications) return
         onTextFieldsChange?.invoke()
     }
 
@@ -84,7 +74,6 @@ class InkCanvasTextFieldManager {
      */
     private fun setupTextChangeCallback(state: CanvasTextFieldState) {
         state.onTextChange = {
-            android.util.Log.d(TAG, "Text changed in text field: '${state.text}'")
             notifyTextFieldsChanged()
         }
     }
